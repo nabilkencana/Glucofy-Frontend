@@ -1,0 +1,66 @@
+.glass-surface {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  /* High-visibility Glassmorphism in Light Mode */
+  background: rgba(255, 255, 255, var(--glass-frost, 0.65));
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturation, 1.6));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturation, 1.6));
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 10px 30px -5px rgba(15, 23, 42, 0.04),
+    0 4px 12px -2px rgba(15, 23, 42, 0.02),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Class-based Dark Mode styling */
+.dark .glass-surface {
+  --glass-blur: 40px;
+  background: rgba(19, 45, 6, var(--glass-frost-dark, 0.5)); /* Richer dark green tint background */
+  backdrop-filter: blur(var(--glass-blur, 40px)) saturate(var(--glass-saturation, 1.4));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 40px)) saturate(var(--glass-saturation, 1.4));
+  border: 1px solid rgba(99, 199, 27, 0.22); /* Rich brand-green border tint */
+  box-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.5),
+    0 8px 16px -6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.glass-surface__filter {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: -1;
+}
+
+.glass-surface__content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: inherit;
+  position: relative;
+  z-index: 1;
+}
+
+.glass-surface--svg {
+  /* Layer displacement filter over standard blur if SVG filters are active */
+  backdrop-filter: var(--filter-id, url(#glass-filter)) blur(var(--glass-blur, 20px)) saturate(var(--glass-saturation, 1.6));
+  -webkit-backdrop-filter: var(--filter-id, url(#glass-filter)) blur(var(--glass-blur, 20px)) saturate(var(--glass-saturation, 1.6));
+}
+
+.glass-surface:focus-visible {
+  outline: 2px solid #63c71b;
+  outline-offset: 2px;
+}

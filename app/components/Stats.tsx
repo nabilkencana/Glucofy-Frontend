@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Stats() {
+  const { t } = useLanguage();
+
   const containerVariants = {
     hidden: {},
     visible: {
@@ -22,28 +25,28 @@ export default function Stats() {
   };
 
   return (
-    <section id="stats" className="py-20 md:py-28 bg-[#F8F9FA] relative">
+    <section id="stats" className="py-20 md:py-28 bg-background relative transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
         
         {/* Heading Section */}
         <div className="max-w-2xl mx-auto mb-16 md:mb-20">
           <motion.h2
-            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4"
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-4"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
           >
-            Indonesia has a sugar problem.
+            {t("stats_title")}
           </motion.h2>
           <motion.p
-            className="text-base sm:text-lg text-slate-500 font-light"
+            className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-light"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Diabetes is rising fast — and most of it starts with what we drink.
+            {t("stats_subtitle")}
           </motion.p>
         </div>
 
@@ -60,37 +63,37 @@ export default function Stats() {
             variants={itemVariants}
             className="flex flex-col items-center px-6 md:px-8 py-4 text-center"
           >
-            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-green tracking-tight mb-4">
-              19.5M
+            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
+              {t("stats_num1")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
-              Indonesians living with diabetes (2024)
+            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+              {t("stats_lbl1")}
             </span>
           </motion.div>
 
           {/* Stat 2 with divider */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80"
+            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80 dark:border-green-900/30"
           >
-            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-green tracking-tight mb-4">
-              73%
+            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
+              {t("stats_num2")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
-              Of cases linked to excess sugar intake
+            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+              {t("stats_lbl2")}
             </span>
           </motion.div>
 
           {/* Stat 3 with divider */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80"
+            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80 dark:border-green-900/30"
           >
-            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-green tracking-tight mb-4">
-              25g
+            <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
+              {t("stats_num3")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
-              Recommended daily sugar limit (WHO)
+            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+              {t("stats_lbl3")}
             </span>
           </motion.div>
         </motion.div>
@@ -99,3 +102,4 @@ export default function Stats() {
     </section>
   );
 }
+
