@@ -57,8 +57,8 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="py-20 md:py-28 bg-background relative transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+    <section id="features" className="py-16 md:py-28 bg-background relative transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         
         {/* Title Block */}
         <div className="max-w-2xl mx-auto text-center mb-16 md:mb-20">

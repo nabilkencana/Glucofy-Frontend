@@ -109,15 +109,15 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 md:py-28 bg-white dark:bg-green-950 relative overflow-hidden transition-colors duration-200">
+    <section id="how-it-works" className="py-16 md:py-28 bg-white dark:bg-green-950 relative overflow-hidden transition-colors duration-200">
       
       {/* Background soft circle */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(34,197,94,0.03)_0%,transparent_70%)] pointer-events-none -z-10" />
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         
         {/* Title */}
-        <div className="max-w-2xl mx-auto text-center mb-24 md:mb-32">
+        <div className="max-w-2xl mx-auto text-center mb-16 md:mb-28">
           <motion.h2
             className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-4"
             initial={{ opacity: 0, y: 15 }}
@@ -138,15 +138,15 @@ export default function HowItWorks() {
           </motion.p>
         </div>
 
-        {/* Steps Flow (Alternating) */}
-        <div className="space-y-28 md:space-y-36">
+        {/* Steps Flow (Alternating on desktop, stacked on mobile) */}
+        <div className="space-y-16 md:space-y-28 lg:space-y-36">
           {steps.map((step, index) => {
             const isEven = index % 2 === 0;
 
             return (
               <div
                 key={step.id}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative"
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center relative"
               >
                 
                 {/* Massive Low-Opacity Watermark Number behind step block */}
@@ -156,7 +156,7 @@ export default function HowItWorks() {
 
                 {/* Text Content Column */}
                 <motion.div
-                  className={`lg:col-span-6 space-y-6 ${
+                  className={`lg:col-span-6 space-y-5 text-center lg:text-left ${
                     isEven ? "lg:order-1 lg:pr-12" : "lg:order-2 lg:pl-12"
                   }`}
                   initial={{ opacity: 0, y: 30 }}

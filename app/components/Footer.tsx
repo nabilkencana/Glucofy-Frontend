@@ -9,8 +9,8 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-background border-t border-slate-200/50 dark:border-green-900/30 py-12 md:py-16 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
+    <footer className="bg-background border-t border-slate-200/50 dark:border-green-900/30 py-10 md:py-16 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left">
         
         {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-1 group">

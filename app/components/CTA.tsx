@@ -9,10 +9,10 @@ export default function CTA() {
   const { t } = useLanguage();
 
   return (
-    <section id="cta" className="py-16 md:py-24 bg-background transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+    <section id="cta" className="py-12 md:py-24 bg-background transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         <motion.div
-          className="bg-glucofy-gradient rounded-[2.5rem] px-8 py-16 md:py-24 text-center relative overflow-hidden flex flex-col items-center justify-center shadow-lg shadow-green-500/10"
+          className="bg-glucofy-gradient rounded-[1.5rem] sm:rounded-[2.5rem] px-6 py-12 md:py-24 text-center relative overflow-hidden flex flex-col items-center justify-center shadow-lg shadow-green-500/10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}

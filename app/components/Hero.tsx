@@ -34,9 +34,9 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-background transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+    <section className="relative pt-28 pb-16 md:pt-40 md:pb-28 overflow-hidden bg-background transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
           
           {/* Left Column: Text & CTA */}
           <motion.div
@@ -54,10 +54,10 @@ export default function Hero() {
               <span>{t("hero_badge")}</span>
             </motion.div>
 
-            {/* Oversized Poppins Heading */}
+            {/* Oversized Heading */}
             <motion.h1
               variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1] mb-6"
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1] mb-5"
             >
               {t("hero_title_1")} <br />
               <span className="text-glucofy-gradient">{t("hero_title_green")}</span>
@@ -116,8 +116,8 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Visual Composition with floating elements */}
-          <div className="lg:col-span-5 relative flex items-center justify-center h-[420px] sm:h-[500px]">
+          {/* Right Column: Visual Composition */}
+          <div className="lg:col-span-5 relative flex items-center justify-center h-[380px] sm:h-[440px] lg:h-[500px]">
             
             {/* Background Blob Grid (Subtle and human-made) */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.06),transparent_60%)] -z-10" />
@@ -127,13 +127,13 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="w-full max-w-[340px] z-20"
+              className="w-full max-w-[280px] min-[375px]:max-w-[305px] min-[410px]:max-w-[325px] sm:max-w-[340px] z-20"
             >
               <GlassSurface
                 width="100%"
                 height="auto"
                 borderRadius={28}
-                className="border border-white/40 dark:border-green-800/20 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-6"
+                className="border border-white/40 dark:border-green-800/20 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-5 sm:p-6"
               >
                 <div className="w-full text-left">
                   <div className="flex items-center justify-between mb-5">
@@ -182,7 +182,7 @@ export default function Hero() {
 
             {/* Floating UI Widget 1: Left Mini Card (Green Icon Badge) */}
             <motion.div
-              className="absolute left-4 top-16 z-30 shadow-[0_4px_16px_rgba(15,23,42,0.02)]"
+              className="absolute left-[-12px] top-12 sm:left-4 sm:top-16 z-30 shadow-[0_4px_16px_rgba(15,23,42,0.02)] scale-90 sm:scale-100 origin-top-left"
               initial={{ y: 0 }}
               animate={{ y: [0, -12, 0] }}
               transition={{
@@ -205,7 +205,7 @@ export default function Hero() {
 
             {/* Floating UI Widget 2: Right Medal Badge */}
             <motion.div
-              className="absolute right-4 bottom-20 z-30 shadow-[0_4px_16px_rgba(15,23,42,0.02)]"
+              className="absolute right-[-12px] bottom-12 sm:right-4 sm:bottom-20 z-30 shadow-[0_4px_16px_rgba(15,23,42,0.02)] scale-[0.8] sm:scale-90 lg:scale-100 origin-bottom-right"
               initial={{ y: 0 }}
               animate={{ y: [0, 12, 0] }}
               transition={{

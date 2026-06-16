@@ -25,8 +25,8 @@ export default function Stats() {
   };
 
   return (
-    <section id="stats" className="py-20 md:py-28 bg-background relative transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
+    <section id="stats" className="py-16 md:py-28 bg-background relative transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 text-center">
         
         {/* Heading Section */}
         <div className="max-w-2xl mx-auto mb-16 md:mb-20">
