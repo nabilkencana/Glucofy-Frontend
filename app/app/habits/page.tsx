@@ -21,28 +21,39 @@ function dayTotal(entries: LogEntry[], key: string) {
 }
 
 function streakLengths(entries: LogEntry[]) {
-  // Count consecutive logged days (ending today) under the limit, plus the
-  // longest such run over the past ~180 days.
-  const ok = (i: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const e = entriesForDate(entries, dateKey(d));
-    return e.length > 0 && e.reduce((s, x) => s + x.totalSugar, 0) <= SUGAR_LIMIT;
-  };
-  
+  if (entries.length === 0) return { current: 0, longest: 0 };
+
+  const loggedDates = Array.from(new Set(entries.map((e) => dateKey(e.ts)))).sort();
+  if (loggedDates.length === 0) return { current: 0, longest: 0 };
+
+  const todayStr = dateKey(Date.now());
+  const datesSet = new Set(loggedDates);
+
+  const firstDate = new Date(loggedDates[0]);
+  const endDate = new Date();
+  firstDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
   let current = 0;
-  for (let i = 0; i < 400 && ok(i); i++) current++;
-  
   let longest = 0;
-  let run = 0;
-  for (let i = 180; i >= 0; i--) {
-    if (ok(i)) {
-      run++;
-      if (run > longest) longest = run;
+  let tempDate = new Date(firstDate);
+
+  while (tempDate <= endDate) {
+    const key = dateKey(tempDate);
+    const hasLog = datesSet.has(key);
+
+    if (hasLog) {
+      current++;
+      longest = Math.max(longest, current);
     } else {
-      run = 0;
+      // Skip day: breaks streak unless it's today
+      if (key !== todayStr) {
+        current = 0;
+      }
     }
+    tempDate.setDate(tempDate.getDate() + 1);
   }
+
   return { current, longest: Math.max(longest, current) };
 }
 
