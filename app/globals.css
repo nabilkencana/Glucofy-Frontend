@@ -98,6 +98,16 @@ body {
   pointer-events: none;
 }
 
+@keyframes draw-donut {
+  from {
+    stroke-dasharray: 0 251.327;
+  }
+}
+
+.animate-donut-segment {
+  animation: draw-donut 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .dark .bg-liquid-glass {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
