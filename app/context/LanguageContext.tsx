@@ -99,6 +99,30 @@ const translations = {
     footer_contact: "Contact",
     footer_privacy: "Privacy Policy",
     footer_rights: "All rights reserved.",
+
+    // Login
+    login_welcome_title: "Welcome back. Your sugar journey continues.",
+    login_welcome_subtitle: "Continue from where you left off and keep your streak alive.",
+    login_title: "Sign In",
+    login_subtitle: "Enter your details to access your dashboard.",
+    login_email_label: "Email",
+    login_password_label: "Password",
+    login_button: "Sign In",
+    login_no_account: "Don't have an account?",
+    login_register_link: "Sign Up",
+
+    // Register
+    register_welcome_title: "Start your healthy journey. Control your sugar.",
+    register_welcome_subtitle: "Register now to track your daily sugar intake easily and maintain healthy streaks.",
+    register_title: "Sign Up",
+    register_subtitle: "Enter your details to create a new account.",
+    register_name_label: "Full Name",
+    register_email_label: "Email",
+    register_password_label: "Password",
+    register_confirm_password_label: "Confirm Password",
+    register_button: "Sign Up",
+    register_has_account: "Already have an account?",
+    register_login_link: "Sign In",
   },
   id: {
     // Navbar
@@ -188,6 +212,30 @@ const translations = {
     footer_contact: "Kontak",
     footer_privacy: "Kebijakan Privasi",
     footer_rights: "Hak cipta dilindungi undang-undang.",
+
+    // Login
+    login_welcome_title: "Selamat datang kembali. Perjalanan gulamu berlanjut.",
+    login_welcome_subtitle: "Lanjutkan dari mana kamu berhenti dan jaga streakmu tetap hidup.",
+    login_title: "Masuk",
+    login_subtitle: "Masukkan detailmu untuk mengakses dasbor.",
+    login_email_label: "Email",
+    login_password_label: "Kata sandi",
+    login_button: "Masuk",
+    login_no_account: "Belum punya akun?",
+    login_register_link: "Daftar",
+
+    // Register
+    register_welcome_title: "Mulai perjalanan sehatmu. Kendalikan konsumsi gulamu.",
+    register_welcome_subtitle: "Daftar sekarang untuk melacak konsumsi gula harian Anda dengan mudah.",
+    register_title: "Daftar",
+    register_subtitle: "Masukkan detail Anda untuk membuat akun baru.",
+    register_name_label: "Nama Lengkap",
+    register_email_label: "Email",
+    register_password_label: "Kata sandi",
+    register_confirm_password_label: "Konfirmasi Kata Sandi",
+    register_button: "Daftar",
+    register_has_account: "Sudah punya akun?",
+    register_login_link: "Masuk",
   },
 };
 

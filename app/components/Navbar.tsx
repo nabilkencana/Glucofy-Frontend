@@ -103,7 +103,7 @@ export default function Navbar() {
 
             {/* Desktop login + CTA */}
             <Link
-              href="#login"
+              href="/login"
               className="hidden md:inline-block text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
               {t("nav_login")}
@@ -145,7 +145,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="#login"
+              href="/login"
               onClick={() => setMobileOpen(false)}
               className="text-lg font-semibold text-slate-800 dark:text-slate-100 py-4 border-b border-slate-100 dark:border-green-900/30 hover:text-glucofy-green transition-colors"
             >
