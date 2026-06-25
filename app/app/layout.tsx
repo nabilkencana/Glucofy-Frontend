@@ -11,6 +11,9 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+
+
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <DashboardShell fontClassName={poppins.className}>
