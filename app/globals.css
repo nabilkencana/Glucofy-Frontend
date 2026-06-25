@@ -43,6 +43,23 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Brand gradient used by the /app dashboard primary buttons (mirrors Lovable --gradient-brand) */
+@utility bg-brand-gradient {
+  background-image: linear-gradient(135deg, hsl(99 53% 52%), hsl(140 65% 35%));
+}
+
+/* Nutri-grade colour utilities (mirror Lovable bg-grade-*) */
+@utility bg-grade-a { background-color: hsl(var(--grade-a)); }
+@utility bg-grade-b { background-color: hsl(var(--grade-b)); }
+@utility bg-grade-c { background-color: hsl(var(--grade-c)); }
+@utility bg-grade-d { background-color: hsl(var(--grade-d)); }
+@utility bg-grade-e { background-color: hsl(var(--grade-e)); }
+
+/* Soft elevation used by dashboard cards/result panels (mirror Lovable shadow-soft) */
+@utility shadow-soft {
+  box-shadow: 0 4px 24px -6px hsl(150 30% 20% / 0.10);
+}
+
 .bg-liquid-glass {
   background: rgba(255, 255, 255, 0.12) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
@@ -204,6 +221,42 @@ body {
   --sidebar-border: oklch(0.32 0.04 140 / 30%);
   --sidebar-ring: oklch(0.556 0.10 140);
 }
+
+/* =========================================================================
+   Glucofy /app dashboard theme — mirrors the Lovable preview design system
+   (https://preview--glucofy.lovable.app/app). Scoped to `.glucofy-dashboard`
+   so the marketing/landing pages keep their existing tokens untouched.
+   ========================================================================= */
+.glucofy-dashboard {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(160 25% 12%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(160 25% 12%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(160 25% 12%);
+  --primary: hsl(99 53% 52%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(150 30% 96%);
+  --secondary-foreground: hsl(160 25% 18%);
+  --muted: hsl(150 20% 96%);
+  --muted-foreground: hsl(160 10% 42%);
+  --accent: hsl(99 60% 94%);
+  --accent-foreground: hsl(140 65% 25%);
+  --destructive: hsl(0 78% 55%);
+  --border: hsl(150 20% 90%);
+  --input: hsl(150 20% 90%);
+  --ring: hsl(99 53% 52%);
+  --radius: 0.85rem;
+
+  /* Nutri-grade scale (A best → E worst); HSL triplets for hsl(var(--grade-x)) */
+  --grade-a: 140 65% 29%;
+  --grade-b: 99 53% 52%;
+  --grade-c: 46 90% 62%;
+  --grade-d: 24 90% 56%;
+  --grade-e: 0 73% 56%;
+}
+/* Dark mode is intentionally disabled for the /app dashboard — it always
+   renders in the light palette above, even when the global `.dark` class is set. */
 
 @layer base {
   * {

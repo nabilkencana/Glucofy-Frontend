@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Moon, Sun, Globe, ArrowLeft } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [name, setName] = useState("");
@@ -15,13 +17,15 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Login/registration is disabled for now — no real account is created.
+  // A valid submit just enters the dashboard.
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       alert(language === "en" ? "Passwords do not match!" : "Kata sandi tidak cocok!");
       return;
     }
-    alert(language === "en" ? `Registered as ${email}` : `Terdaftar sebagai ${email}`);
+    router.push("/app");
   };
 
   return (

@@ -3,19 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Moon, Sun, Globe, ArrowLeft } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function LoginPage() {
+  const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Login is disabled for now — no real authentication. Any submit just
+  // enters the dashboard, mirroring the future "login → dashboard" flow.
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(language === "en" ? `Logging in as ${email}` : `Masuk sebagai ${email}`);
+    router.push("/app");
   };
 
   return (
