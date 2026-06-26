@@ -24,16 +24,40 @@ interface ChatMessage {
 }
 
 function streakLengths(entries: LogEntry[]) {
-  const ok = (i: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const e = entriesForDate(entries, dateKey(d));
-    return e.length > 0 && e.reduce((s, x) => s + x.totalSugar, 0) <= SUGAR_LIMIT;
-  };
-  
+  if (entries.length === 0) return { current: 0, longest: 0 };
+
+  const loggedDates = Array.from(new Set(entries.map((e) => dateKey(e.ts)))).sort();
+  if (loggedDates.length === 0) return { current: 0, longest: 0 };
+
+  const todayStr = dateKey(Date.now());
+  const datesSet = new Set(loggedDates);
+
+  const firstDate = new Date(loggedDates[0]);
+  const endDate = new Date();
+  firstDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
   let current = 0;
-  for (let i = 0; i < 400 && ok(i); i++) current++;
-  return current;
+  let longest = 0;
+  let tempDate = new Date(firstDate);
+
+  while (tempDate <= endDate) {
+    const key = dateKey(tempDate);
+    const hasLog = datesSet.has(key);
+
+    if (hasLog) {
+      current++;
+      longest = Math.max(longest, current);
+    } else {
+      // Skip day: breaks streak unless it's today
+      if (key !== todayStr) {
+        current = 0;
+      }
+    }
+    tempDate.setDate(tempDate.getDate() + 1);
+  }
+
+  return { current, longest: Math.max(longest, current) };
 }
 
 export default function AIPage() {
@@ -110,7 +134,7 @@ export default function AIPage() {
     const total7Days = entries7Days.reduce((sum, e) => sum + e.totalSugar, 0);
     const avgDaily7Days = total7Days / 7;
 
-    const streak = streakLengths(entries);
+    const { current: streak } = streakLengths(entries);
 
     // Localized grade label
     let gradeLabel = t("ai_overall_excellent");
