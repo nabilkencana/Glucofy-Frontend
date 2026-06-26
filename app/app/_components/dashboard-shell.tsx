@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   ScanLine,
@@ -12,6 +12,8 @@ import {
   Sparkles,
   Settings,
   PanelLeft,
+  User,
+  LogOut,
 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -38,7 +40,9 @@ export default function DashboardShell({
 }) {
   const { language, setLanguage, t } = useLanguage();
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Sidebar follows the viewport: open on desktop, collapsed (drawer) on mobile.
   useEffect(() => {
@@ -56,6 +60,12 @@ export default function DashboardShell({
 
   const flag = language === "id" ? "🇮🇩" : "🇬🇧";
   const toggleLanguage = () => setLanguage(language === "en" ? "id" : "en");
+
+  // Login is disabled, so "exit" simply leaves the dashboard back to the landing page.
+  const handleExit = () => {
+    setMenuOpen(false);
+    router.push("/");
+  };
 
   return (
     <div
@@ -143,13 +153,59 @@ export default function DashboardShell({
             </p>
           </div>
 
-          <button
-            onClick={toggleLanguage}
-            aria-label="Toggle language"
-            className="grid h-9 w-9 place-items-center rounded-full text-base transition-colors hover:bg-muted"
-          >
-            {flag}
-          </button>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              onClick={toggleLanguage}
+              aria-label="Toggle language"
+              className="grid h-9 w-9 place-items-center rounded-full text-base transition-colors hover:bg-muted"
+            >
+              {flag}
+            </button>
+
+            {/* Profile menu */}
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-label="Profile menu"
+                aria-expanded={menuOpen}
+                className="grid h-9 w-9 place-items-center rounded-full border-2 border-primary/40 text-muted-foreground transition-colors hover:border-primary/70"
+              >
+                <User className="h-[18px] w-[18px]" />
+              </button>
+
+              {menuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} aria-hidden />
+                  <div className="absolute right-0 top-12 z-50 w-48 overflow-hidden rounded-lg border border-border bg-card py-1 shadow-soft">
+                    <Link
+                      href="/app/profile"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+                    >
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      {t("menu_profile")}
+                    </Link>
+                    <Link
+                      href="/app/settings"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
+                    >
+                      <Settings className="h-4 w-4 text-muted-foreground" />
+                      {t("menu_settings")}
+                    </Link>
+                    <div className="my-1 h-px bg-border" />
+                    <button
+                      onClick={handleExit}
+                      className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-destructive transition-colors hover:bg-muted"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      {t("menu_logout")}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </header>
 
         {/* Page content */}

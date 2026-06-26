@@ -16,11 +16,6 @@ import { SugarBarChart } from "../_components/sugar-bar-chart";
 import { cn } from "@/lib/utils";
 
 const card = "rounded-lg border bg-card text-card-foreground shadow-sm";
-const inputClass =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-const labelClass = "text-sm font-medium leading-none";
-const btnBrand =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 bg-brand-gradient text-white shadow-soft transition-all hover:opacity-95 disabled:pointer-events-none disabled:opacity-60";
 
 const fmtNum = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
 const fmtTime = (ts: number) =>
@@ -35,16 +30,12 @@ function sinceLabel(now: number, ts: number) {
 
 export default function TrackerPage() {
   const { t } = useLanguage();
-  const { ready, entries, logManual, removeEntry } = useLog();
+  const { ready, entries, removeEntry } = useLog();
   const toast = useToast();
 
   const [tab, setTab] = useState<"today" | "weekly">("today");
   const [selectedDate, setSelectedDate] = useState(() => dateKey(Date.now()));
   const [now, setNow] = useState(() => Date.now());
-
-  const [product, setProduct] = useState("");
-  const [sugar, setSugar] = useState("");
-  const [serving, setServing] = useState("");
 
   // Keep the "since last entry" timer fresh.
   useEffect(() => {
@@ -59,21 +50,6 @@ export default function TrackerPage() {
   const fill = ratio < 60 ? "bg-grade-b" : ratio < 90 ? "bg-grade-c" : "bg-grade-e";
   const over = total > SUGAR_LIMIT;
   const last = dayEntries[0];
-
-  const handleLog = (e: React.FormEvent) => {
-    e.preventDefault();
-    const s = parseFloat(sugar);
-    if (Number.isNaN(s)) return;
-    logManual({
-      product: product.trim() || "Produk",
-      sugarPer100ml: s,
-      servingMl: parseFloat(serving) || 100,
-    });
-    toast(t("track_logged_toast"));
-    setProduct("");
-    setSugar("");
-    setServing("");
-  };
 
   const handleDelete = (id: string) => {
     removeEntry(id);
@@ -173,50 +149,6 @@ export default function TrackerPage() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Add entry */}
-          <div className={cn(card, "p-6")}>
-            <h2 className="mb-4 font-semibold">{t("track_add_title")}</h2>
-            <form onSubmit={handleLog} className="grid items-end gap-4 lg:grid-cols-3">
-              <div className="space-y-2">
-                <label className={labelClass}>{t("track_product_label")}</label>
-                <input
-                  className={inputClass}
-                  placeholder={t("track_product_ph")}
-                  value={product}
-                  onChange={(e) => setProduct(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={labelClass}>{t("track_sugar_label")}</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  inputMode="decimal"
-                  className={inputClass}
-                  value={sugar}
-                  onChange={(e) => setSugar(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className={labelClass}>{t("track_serving_label")}</label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  className={inputClass}
-                  value={serving}
-                  onChange={(e) => setServing(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                className={cn(btnBrand, "lg:col-span-3 lg:justify-self-start")}
-                disabled={sugar.trim() === ""}
-              >
-                {t("track_log_btn")}
-              </button>
-            </form>
           </div>
 
           {/* Records */}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { ThemeProvider } from "./context/ThemeContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import "./globals.css";
 
@@ -24,10 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased scroll-smooth`}>
-      <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-green-100 dark:selection:bg-green-950 selection:text-green-800 dark:selection:text-green-200 transition-colors duration-200">
-        <ThemeProvider>
-          <LanguageProvider>{children}</LanguageProvider>
-        </ThemeProvider>
+      <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-green-100 selection:text-green-800">
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

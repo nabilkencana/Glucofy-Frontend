@@ -180,6 +180,9 @@ const translations = {
     profile_section_session: "Session",
     profile_logout_btn: "Logout",
     dash_greeting: "Welcome back",
+    menu_profile: "Profile",
+    menu_settings: "Settings",
+    menu_logout: "Log out",
 
     // Dashboard — page
     dash_title: "Dashboard",
@@ -426,6 +429,9 @@ const translations = {
     profile_section_session: "Sesi",
     profile_logout_btn: "Keluar",
     dash_greeting: "Selamat datang kembali",
+    menu_profile: "Profil",
+    menu_settings: "Pengaturan",
+    menu_logout: "Keluar",
 
     // Dashboard — page
     dash_title: "Dasbor",

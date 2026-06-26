@@ -4,13 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Moon, Sun, Globe, ArrowLeft } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+import { Globe, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -92,17 +90,8 @@ export default function RegisterPage() {
             <span>{language === "en" ? "Back" : "Kembali"}</span>
           </Link>
 
-          {/* Theme & Language controls */}
+          {/* Language controls */}
           <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-green-900/20 text-slate-600 dark:text-slate-400 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-            </button>
-
             {/* Language Switcher */}
             <button
               onClick={() => setLanguage(language === "en" ? "id" : "en")}
