@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Lightbulb, Inbox, Crown } from "lucide-react";
+import { Send, TriangleAlert, Lightbulb, Inbox, Crown , Sparkles} from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../_components/toast";
 import { GradeBadge } from "../_components/grade-badge";
@@ -297,8 +297,8 @@ export default function AIPage() {
       <div className={cn(cardStyle, "flex flex-col space-y-4 h-[450px] relative overflow-hidden")}>
         {/* On-going Feature Overlay */}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-6 bg-slate-50/90 backdrop-blur-[2px]">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-3 animate-pulse">
-            <Sparkles className="h-6 w-6" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 mb-3 animate-pulse">
+            <TriangleAlert className="h-6 w-6" />
           </div>
           <h4 className="text-sm font-bold text-slate-800">
             {language === "id" ? "Fitur Dalam Pengembangan" : "On-going Feature"}
