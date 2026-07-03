@@ -38,6 +38,68 @@ function Skel({ className }: { className?: string }) {
   return <div className={cn("animate-pulse rounded bg-muted", className)} />;
 }
 
+/** Client-side image compression helper */
+function compressImage(file: File, maxWidth = 1200, maxHeight = 1200, quality = 0.75): Promise<File> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/")) {
+      resolve(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+}
+
 export default function ScannerPage() {
   const { t, language } = useLanguage();
   const toast = useToast();
@@ -166,9 +228,13 @@ export default function ScannerPage() {
     setError(null);
     setAnalyzing(true);
     try {
+      console.log(`[Image Compression] Original file size: ${(file.size / 1024).toFixed(1)} KB`);
+      const compressedFile = await compressImage(file);
+      console.log(`[Image Compression] Compressed file size: ${(compressedFile.size / 1024).toFixed(1)} KB`);
+
       const log = await scanLabel({
-        file,
-        contentType: file.type === "image/png" ? "image/png" : "image/jpeg",
+        file: compressedFile,
+        contentType: "image/jpeg",
         productName: product.trim() || undefined,
         servingSizeMl: serving ? parseFloat(serving) : undefined,
       });
