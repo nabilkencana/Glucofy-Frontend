@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Upload, Sparkles, Inbox, AlertCircle } from "lucide-react";
+import { Upload, Sparkles, Inbox, AlertCircle, Camera, X } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../_components/toast";
 import { GradeBadge } from "../_components/grade-badge";
@@ -69,6 +69,65 @@ export default function ScannerPage() {
   useEffect(() => {
     reloadHistory();
   }, []);
+
+  // Live camera preview state
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+
+  const startCamera = async () => {
+    setError(null);
+    setResult(null);
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      setStream(s);
+      setIsCameraActive(true);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+        }
+      }, 100);
+    } catch (err) {
+      toast(language === "id" ? "Gagal mengakses kamera. Pastikan izin kamera diizinkan." : "Failed to access camera. Please make sure camera permission is granted.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    setStream(null);
+    setIsCameraActive(false);
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !stream) return;
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" });
+          handleFile(file);
+        }
+      }, "image/jpeg");
+    }
+    stopCamera();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   // Step 1-2-3 scan flow via real API
   const handleFile = async (file: File | undefined) => {
@@ -148,29 +207,87 @@ export default function ScannerPage() {
       {/* Upload + manual */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Upload — real 3-step S3 scan */}
-        <div className={cn(card, "p-6 border-primary/10")}>
+        <div className={cn(card, "p-6 border-primary/10 flex flex-col justify-between")}>
           <h2 className="mb-4 font-semibold">{t("scan_upload_title")}</h2>
-          <label
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              handleFile(e.dataTransfer.files?.[0]);
-            }}
-            className="block cursor-pointer rounded-xl border-2 border-dashed border-border p-10 text-center transition hover:bg-muted/40"
-          >
-            <Upload className="mx-auto h-10 w-10 text-primary" />
-            <div className="mt-3 font-medium">
-              {analyzing ? t("scan_upload_analyzing") : t("scan_upload_drop")}
+          
+          {isCameraActive ? (
+            /* Live Camera view */
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative w-full aspect-video rounded-xl bg-black overflow-hidden border border-border shadow-inner">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex gap-3 w-full">
+                <button
+                  type="button"
+                  onClick={capturePhoto}
+                  className="flex-1 py-2.5 px-4 bg-brand-gradient hover:opacity-95 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-soft cursor-pointer"
+                >
+                  <Camera className="h-4 w-4" />
+                  {language === "id" ? "Ambil Foto" : "Take Photo"}
+                </button>
+                <button
+                  type="button"
+                  onClick={stopCamera}
+                  className="py-2.5 px-4 bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-semibold rounded-xl flex items-center justify-center gap-2 cursor-pointer border border-border"
+                >
+                  <X className="h-4 w-4" />
+                  {language === "id" ? "Batal" : "Cancel"}
+                </button>
+              </div>
             </div>
-            <div className="mt-1 text-xs text-muted-foreground">{t("scan_upload_hint")}</div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/png,image/jpeg"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
-            />
-          </label>
+          ) : (
+            /* Main choices */
+            <div className="space-y-4 flex-1 flex flex-col justify-center">
+              {/* Drag and Drop / Choose File */}
+              <label
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  handleFile(e.dataTransfer.files?.[0]);
+                }}
+                className="block cursor-pointer rounded-xl border-2 border-dashed border-border p-10 text-center transition hover:bg-muted/40"
+              >
+                <Upload className="mx-auto h-10 w-10 text-primary" />
+                <div className="mt-3 font-medium">
+                  {analyzing ? t("scan_upload_analyzing") : t("scan_upload_drop")}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{t("scan_upload_hint")}</div>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  className="hidden"
+                  onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
+                />
+              </label>
+              
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-border"></div>
+                <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                  {language === "id" ? "atau" : "or"}
+                </span>
+                <div className="flex-grow border-t border-border"></div>
+              </div>
+
+              {/* Direct Camera Button */}
+              <button
+                type="button"
+                onClick={startCamera}
+                disabled={analyzing}
+                className="w-full py-3 px-4 border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-semibold rounded-xl flex items-center justify-center gap-2.5 transition duration-200 cursor-pointer disabled:opacity-60"
+              >
+                <Camera className="h-5 w-5" />
+                <span>
+                  {language === "id" ? "Buka Kamera Langsung" : "Open Camera Directly"}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Manual entry */}
