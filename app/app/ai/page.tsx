@@ -201,7 +201,7 @@ export default function AIPage() {
 
         {aiError && aiError.toLowerCase().includes("premium") && (
           <div className="flex flex-col items-center justify-center text-center py-10 px-4 rounded-xl border border-yellow-200 bg-yellow-50/50 my-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 mb-4 animate-bounce">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 mb-4">
               <Crown className="h-6 w-6 fill-current" />
             </div>
             <h4 className="text-base font-bold text-slate-800">
