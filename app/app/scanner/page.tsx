@@ -210,84 +210,51 @@ export default function ScannerPage() {
         <div className={cn(card, "p-6 border-primary/10 flex flex-col justify-between")}>
           <h2 className="mb-4 font-semibold">{t("scan_upload_title")}</h2>
           
-          {isCameraActive ? (
-            /* Live Camera view */
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative w-full aspect-video rounded-xl bg-black overflow-hidden border border-border shadow-inner">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
+          <div className="space-y-4 flex-1 flex flex-col justify-center">
+            {/* Drag and Drop / Choose File */}
+            <label
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                handleFile(e.dataTransfer.files?.[0]);
+              }}
+              className="block cursor-pointer rounded-xl border-2 border-dashed border-border p-10 text-center transition hover:bg-muted/40"
+            >
+              <Upload className="mx-auto h-10 w-10 text-primary" />
+              <div className="mt-3 font-medium">
+                {analyzing ? t("scan_upload_analyzing") : t("scan_upload_drop")}
               </div>
-              <div className="flex gap-3 w-full">
-                <button
-                  type="button"
-                  onClick={capturePhoto}
-                  className="flex-1 py-2.5 px-4 bg-brand-gradient hover:opacity-95 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-soft cursor-pointer"
-                >
-                  <Camera className="h-4 w-4" />
-                  {language === "id" ? "Ambil Foto" : "Take Photo"}
-                </button>
-                <button
-                  type="button"
-                  onClick={stopCamera}
-                  className="py-2.5 px-4 bg-muted hover:bg-muted/80 text-muted-foreground text-sm font-semibold rounded-xl flex items-center justify-center gap-2 cursor-pointer border border-border"
-                >
-                  <X className="h-4 w-4" />
-                  {language === "id" ? "Batal" : "Cancel"}
-                </button>
-              </div>
+              <div className="mt-1 text-xs text-muted-foreground">{t("scan_upload_hint")}</div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                className="hidden"
+                onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
+              />
+            </label>
+            
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                {language === "id" ? "atau" : "or"}
+              </span>
+              <div className="flex-grow border-t border-border"></div>
             </div>
-          ) : (
-            /* Main choices */
-            <div className="space-y-4 flex-1 flex flex-col justify-center">
-              {/* Drag and Drop / Choose File */}
-              <label
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  handleFile(e.dataTransfer.files?.[0]);
-                }}
-                className="block cursor-pointer rounded-xl border-2 border-dashed border-border p-10 text-center transition hover:bg-muted/40"
-              >
-                <Upload className="mx-auto h-10 w-10 text-primary" />
-                <div className="mt-3 font-medium">
-                  {analyzing ? t("scan_upload_analyzing") : t("scan_upload_drop")}
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">{t("scan_upload_hint")}</div>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/png,image/jpeg"
-                  className="hidden"
-                  onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
-                />
-              </label>
-              
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-border"></div>
-                <span className="flex-shrink mx-4 text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                  {language === "id" ? "atau" : "or"}
-                </span>
-                <div className="flex-grow border-t border-border"></div>
-              </div>
 
-              {/* Direct Camera Button */}
-              <button
-                type="button"
-                onClick={startCamera}
-                disabled={analyzing}
-                className="w-full py-3 px-4 border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-semibold rounded-xl flex items-center justify-center gap-2.5 transition duration-200 cursor-pointer disabled:opacity-60"
-              >
-                <Camera className="h-5 w-5" />
-                <span>
-                  {language === "id" ? "Buka Kamera Langsung" : "Open Camera Directly"}
-                </span>
-              </button>
-            </div>
-          )}
+            {/* Direct Camera Button */}
+            <button
+              type="button"
+              onClick={startCamera}
+              disabled={analyzing}
+              className="w-full py-3 px-4 border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-semibold rounded-xl flex items-center justify-center gap-2.5 transition duration-200 cursor-pointer disabled:opacity-60"
+            >
+              <Camera className="h-5 w-5" />
+              <span>
+                {language === "id" ? "Buka Kamera Langsung" : "Open Camera Directly"}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Manual entry */}
@@ -402,6 +369,58 @@ export default function ScannerPage() {
           </div>
         )}
       </div>
+      {isCameraActive && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/95 text-white p-6 justify-between">
+          {/* Header */}
+          <div className="flex items-center justify-between max-w-3xl mx-auto w-full mb-4 shrink-0">
+            <div>
+              <h3 className="text-lg font-bold">
+                {language === "id" ? "Pindai Label Nutrisi" : "Scan Nutrition Label"}
+              </h3>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                {language === "id"
+                  ? "Posisikan tabel nilai gizi agar terbaca jelas oleh AI"
+                  : "Position the nutrition facts table clearly for the AI"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={stopCamera}
+              className="h-10 w-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 transition cursor-pointer"
+            >
+              <X className="h-5 w-5 text-white" />
+            </button>
+          </div>
+
+          {/* Video stream container */}
+          <div className="flex-1 w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 relative shadow-2xl">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover"
+            />
+            {/* Guide overlay box */}
+            <div className="absolute inset-0 border-[3px] border-dashed border-primary/40 m-8 sm:m-12 rounded-xl pointer-events-none flex items-center justify-center">
+              <span className="text-[10px] sm:text-xs font-semibold tracking-wider text-primary/70 uppercase bg-zinc-950/80 px-3 py-1 rounded-full border border-primary/20 backdrop-blur-sm">
+                {language === "id" ? "Area Pindai Gizi" : "Nutrition Facts Area"}
+              </span>
+            </div>
+          </div>
+
+          {/* Shutter Controls */}
+          <div className="py-6 flex items-center justify-center gap-6 max-w-3xl mx-auto w-full shrink-0">
+            <button
+              type="button"
+              onClick={capturePhoto}
+              className="h-16 w-16 rounded-full border-4 border-white flex items-center justify-center bg-transparent transition active:scale-95 cursor-pointer"
+              aria-label="Capture photo"
+            >
+              <div className="h-12 w-12 rounded-full bg-white transition hover:bg-zinc-200" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
