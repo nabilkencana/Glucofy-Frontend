@@ -75,9 +75,38 @@ export default function ScannerPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
+  const [zoom, setZoom] = useState(1);
+
+  // Apply hardware zoom if available, and fallback to CSS zoom
+  const handleZoomChange = async (level: number) => {
+    setZoom(level);
+    if (stream) {
+      const track = stream.getVideoTracks()[0];
+      if (track) {
+        try {
+          if (typeof track.getCapabilities === "function") {
+            const caps = track.getCapabilities() as any;
+            if (caps.zoom) {
+              const min = caps.zoom.min || 1;
+              const max = caps.zoom.max || 3;
+              // Map level (1 to 2) to track zoom level
+              const targetZoom = level === 1 ? min : min + (max - min) * ((level - 1) / 1);
+              await track.applyConstraints({
+                advanced: [{ zoom: targetZoom } as any]
+              });
+            }
+          }
+        } catch (e) {
+          console.warn("Hardware zoom not supported or failed:", e);
+        }
+      }
+    }
+  };
+
   const startCamera = async () => {
     setError(null);
     setResult(null);
+    setZoom(1);
     try {
       const s = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
@@ -100,6 +129,7 @@ export default function ScannerPage() {
     }
     setStream(null);
     setIsCameraActive(false);
+    setZoom(1);
   };
 
   const capturePhoto = () => {
@@ -398,13 +428,32 @@ export default function ScannerPage() {
               ref={videoRef}
               autoPlay
               playsInline
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-300 origin-center"
+              style={{ transform: `scale(${zoom})` }}
             />
             {/* Guide overlay box */}
             <div className="absolute inset-0 border-[3px] border-dashed border-primary/40 m-8 sm:m-12 rounded-xl pointer-events-none flex items-center justify-center">
               <span className="text-[10px] sm:text-xs font-semibold tracking-wider text-primary/70 uppercase bg-zinc-950/80 px-3 py-1 rounded-full border border-primary/20 backdrop-blur-sm">
                 {language === "id" ? "Area Pindai Gizi" : "Nutrition Facts Area"}
               </span>
+            </div>
+            {/* Zoom presets overlay */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+              {[1, 1.5, 2].map((z) => (
+                <button
+                  key={z}
+                  type="button"
+                  onClick={() => handleZoomChange(z)}
+                  className={cn(
+                    "h-8 w-8 rounded-full text-xs font-extrabold flex items-center justify-center backdrop-blur-md transition cursor-pointer border",
+                    zoom === z
+                      ? "bg-primary text-white border-primary"
+                      : "bg-black/60 text-white/80 border-white/20 hover:bg-black/80"
+                  )}
+                >
+                  {z}x
+                </button>
+              ))}
             </div>
           </div>
 
