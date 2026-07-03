@@ -31,28 +31,28 @@ export default function Features() {
       title: "feat_scanner_title",
       description: "feat_scanner_desc",
       className: "col-span-1 md:col-span-7",
-      colorClass: "bg-green-50 dark:bg-green-950/40 text-glucofy-green",
+      colorClass: "bg-green-50  text-glucofy-green",
     },
     {
       icon: GlassWater,
       title: "feat_tracker_title",
       description: "feat_tracker_desc",
       className: "col-span-1 md:col-span-5",
-      colorClass: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-450",
+      colorClass: "bg-blue-50  text-blue-600 ",
     },
     {
       icon: Flame,
       title: "feat_habit_title",
       description: "feat_habit_desc",
       className: "col-span-1 md:col-span-5",
-      colorClass: "bg-amber-50 dark:bg-amber-950/40 text-amber-500 dark:text-amber-450",
+      colorClass: "bg-amber-50  text-amber-500 ",
     },
     {
       icon: Sparkles,
       title: "feat_ai_title",
       description: "feat_ai_desc",
       className: "col-span-1 md:col-span-7",
-      colorClass: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-450",
+      colorClass: "bg-purple-50  text-purple-600 ",
     },
   ];
 
@@ -63,7 +63,7 @@ export default function Features() {
         {/* Title Block */}
         <div className="max-w-2xl mx-auto text-center mb-16 md:mb-20">
           <motion.h2
-            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-4"
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -72,7 +72,7 @@ export default function Features() {
             {t("feat_title")}
           </motion.h2>
           <motion.p
-            className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-light"
+            className="text-base sm:text-lg text-slate-500 font-light"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -96,7 +96,7 @@ export default function Features() {
               <motion.div
                 key={idx}
                 variants={cardVariants}
-                className={`group bg-white dark:bg-green-900/10 border border-slate-100/80 dark:border-green-900/30 rounded-3xl p-8 lg:p-10 flex flex-col justify-between transition-all duration-300 hover:border-slate-200/80 dark:hover:border-green-800/40 hover:shadow-[0_8px_30px_rgba(15,23,42,0.015)] ${feature.className}`}
+                className={`group bg-white  border border-slate-100/80  rounded-3xl p-8 lg:p-10 flex flex-col justify-between transition-all duration-300 hover:border-slate-200/80  hover:shadow-[0_8px_30px_rgba(15,23,42,0.015)] ${feature.className}`}
               >
                 <div>
                   {/* Icon Badge */}
@@ -105,16 +105,16 @@ export default function Features() {
                   </div>
                   
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-glucofy-green transition-colors duration-200">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-glucofy-green transition-colors duration-200">
                     {t(feature.title)}
                   </h3>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-light text-sm sm:text-base">
+                  <p className="text-slate-500 leading-relaxed font-light text-sm sm:text-base">
                     {t(feature.description)}
                   </p>
                 </div>
                 
                 {/* Visual bottom spacing */}
-                <div className="mt-8 pt-4 border-t border-slate-50/50 dark:border-green-900/30 flex items-center text-xs font-semibold text-glucofy-green opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="mt-8 pt-4 border-t border-slate-50/50 flex items-center text-xs font-semibold text-glucofy-green opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span>{t("feat_learn_more")} &rarr;</span>
                 </div>
               </motion.div>

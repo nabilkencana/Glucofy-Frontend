@@ -48,7 +48,7 @@ export default function Hero() {
             {/* Tagline Badge */}
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-900/30 text-xs font-semibold text-green-700 dark:text-green-400 mb-6 shadow-[0_1px_2px_rgba(34,197,94,0.02)]"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-700 mb-6 shadow-[0_1px_2px_rgba(34,197,94,0.02)]"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>{t("hero_badge")}</span>
@@ -57,7 +57,7 @@ export default function Hero() {
             {/* Oversized Heading */}
             <motion.h1
               variants={itemVariants}
-              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1] mb-5"
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-5"
             >
               {t("hero_title_1")} <br />
               <span className="text-glucofy-gradient">{t("hero_title_green")}</span>
@@ -66,7 +66,7 @@ export default function Hero() {
             {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-xl mb-8 leading-relaxed font-light"
+              className="text-base sm:text-lg text-slate-600 max-w-xl mb-8 leading-relaxed font-light"
             >
               {t("hero_subtitle")}
             </motion.p>
@@ -87,7 +87,7 @@ export default function Hero() {
                 href="#how-it-works"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 transition-colors"
               >
-                <Play className="w-4 h-4 fill-slate-500 dark:fill-slate-400 text-slate-500 dark:text-slate-400" />
+                <Play className="w-4 h-4 fill-slate-500 text-slate-500" />
                 <span>{t("hero_cta_secondary")}</span>
               </Link>
             </motion.div>
@@ -95,22 +95,22 @@ export default function Hero() {
             {/* Trust Metrics */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-wrap items-center gap-8 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200/60 dark:border-green-900/30 pt-8 w-full"
+              className="flex flex-wrap items-center gap-8 text-sm text-slate-500 border-t border-slate-200/60 pt-8 w-full"
             >
               <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-green-900/40 text-slate-600 dark:text-slate-450">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600">
                   <Users className="w-4 h-4" />
                 </div>
                 <span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-semibold">17k+</strong> {t("hero_stats_users")}
+                  <strong className="text-slate-800 font-semibold">17k+</strong> {t("hero_stats_users")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-green-900/40 text-slate-600 dark:text-slate-450">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600">
                   <TrendingDown className="w-4 h-4" />
                 </div>
                 <span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-semibold">Avg. 31%</strong> {t("hero_stats_drop")}
+                  <strong className="text-slate-800 font-semibold">Avg. 31%</strong> {t("hero_stats_drop")}
                 </span>
               </div>
             </motion.div>
@@ -133,17 +133,17 @@ export default function Hero() {
                 width="100%"
                 height="auto"
                 borderRadius={28}
-                className="border border-white/40 dark:border-green-800/20 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-5 sm:p-6"
+                className="border border-white/40 shadow-[0_8px_30px_rgba(0,0,0,0.03)] p-5 sm:p-6"
               >
                 <div className="w-full text-left">
                   <div className="flex items-center justify-between mb-5">
                     <div className="text-left">
-                      <span className="text-xs text-slate-400 dark:text-slate-500 block font-medium uppercase tracking-wider">{t("hero_today_intake")}</span>
+                      <span className="text-xs text-slate-400 block font-medium uppercase tracking-wider">{t("hero_today_intake")}</span>
                       <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-3xl font-bold text-slate-800 dark:text-slate-100">18</span>
-                        <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">g</span>
-                        <span className="text-slate-300 dark:text-slate-600 font-light text-sm mx-1">/</span>
-                        <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">25g</span>
+                        <span className="text-3xl font-bold text-slate-800">18</span>
+                        <span className="text-slate-500 font-medium text-sm">g</span>
+                        <span className="text-slate-300 font-light text-sm mx-1">/</span>
+                        <span className="text-slate-500 font-medium text-sm">25g</span>
                       </div>
                     </div>
                     {/* Grade Badge */}
@@ -154,10 +154,10 @@ export default function Hero() {
 
                   {/* Progress Slider Mockup */}
                   <div className="space-y-3 mb-6">
-                    <div className="h-2 w-full rounded-full bg-slate-100 dark:bg-green-900/50 overflow-hidden relative">
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden relative">
                       <div className="absolute top-0 left-0 bottom-0 w-[72%] bg-green-500 rounded-full" />
                     </div>
-                    <div className="flex justify-between text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-400">
                       <span className="text-green-500">A</span>
                       <span className="text-green-500">B</span>
                       <span className="text-amber-500">C</span>
@@ -167,13 +167,13 @@ export default function Hero() {
                   </div>
 
                   {/* Streak Section */}
-                  <div className="flex items-start gap-3 p-3 bg-green-50/50 dark:bg-green-950/20 border border-green-100/40 dark:border-green-900/30 rounded-2xl text-left">
+                  <div className="flex items-start gap-3 p-3 bg-green-50/50 border border-green-100/40 rounded-2xl text-left">
                     <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0 mt-0.5">
                       <Check className="w-3.5 h-3.5" />
                     </div>
                     <div className="space-y-0.5">
-                      <p className="text-xs font-semibold text-green-800 dark:text-green-400">{t("hero_streak_maintained")}</p>
-                      <p className="text-[11px] text-green-700/80 dark:text-green-400/80 font-light font-sans">{t("hero_streak_desc")}</p>
+                      <p className="text-xs font-semibold text-green-800">{t("hero_streak_maintained")}</p>
+                      <p className="text-[11px] text-green-700/80 font-light font-sans">{t("hero_streak_desc")}</p>
                     </div>
                   </div>
                 </div>
@@ -195,9 +195,9 @@ export default function Hero() {
                 width={56}
                 height={56}
                 borderRadius={16}
-                className="border border-white/40 dark:border-green-800/20"
+                className="border border-white/40"
               >
-                <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-950/40 flex items-center justify-center text-glucofy-green">
+                <div className="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center text-glucofy-green">
                   <Sparkles className="w-5 h-5" />
                 </div>
               </GlassSurface>
@@ -219,15 +219,15 @@ export default function Hero() {
                 width={176}
                 height="auto"
                 borderRadius={16}
-                className="border border-white/40 dark:border-green-800/20 p-4"
+                className="border border-white/40 p-4"
               >
                 <div className="flex items-center gap-3 w-full">
-                  <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500 shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
                     <Award className="w-5 h-5" />
                   </div>
                   <div className="text-left space-y-0.5">
-                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{t("hero_top_trackers")}</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{t("hero_location")}</p>
+                    <p className="text-xs font-semibold text-slate-800">{t("hero_top_trackers")}</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{t("hero_location")}</p>
                   </div>
                 </div>
               </GlassSurface>

@@ -295,22 +295,28 @@ export default function AIPage() {
 
       {/* Chat */}
       <div className={cn(cardStyle, "flex flex-col space-y-4 h-[450px] relative overflow-hidden")}>
-        {aiError && aiError.toLowerCase().includes("premium") && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-6 bg-slate-50/85 backdrop-blur-[2px]">
-            <Crown className="h-8 w-8 text-yellow-600 mb-2 animate-pulse fill-current animate-bounce" />
-            <h4 className="text-sm font-bold text-slate-800">
-              {language === "id" ? "Obrolan Glucofy AI Premium" : "Glucofy AI Premium Chat"}
-            </h4>
-            <p className="text-xs text-slate-500 max-w-xs mt-1.5 leading-relaxed">
-              {language === "id"
-                ? "Tanyakan apa saja ke AI asisten kesehatan pribadi Anda dengan berlangganan Premium."
-                : "Ask anything to your personal AI health assistant by upgrading to Premium."}
-            </p>
+        {/* On-going Feature Overlay */}
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-6 bg-slate-50/90 backdrop-blur-[2px]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-3 animate-pulse">
+            <Sparkles className="h-6 w-6" />
           </div>
-        )}
-        <div>
-          <h3 className="font-semibold text-foreground">{t("ai_chat_title")}</h3>
-          <p className="text-xs text-muted-foreground">{t("ai_chat_eg")}</p>
+          <h4 className="text-sm font-bold text-slate-800">
+            {language === "id" ? "Fitur Dalam Pengembangan" : "On-going Feature"}
+          </h4>
+          <p className="text-xs text-slate-500 max-w-xs mt-1.5 leading-relaxed">
+            {language === "id"
+              ? "Fitur tanya jawab asisten kesehatan Glucofy AI sedang dalam pengembangan dan segera hadir."
+              : "Glucofy AI health assistant chat feature is currently under development and will be available soon."}
+          </p>
+        </div>
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="font-semibold text-foreground">{t("ai_chat_title")}</h3>
+            <p className="text-xs text-muted-foreground">{t("ai_chat_eg")}</p>
+          </div>
+          <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 border border-blue-200 uppercase tracking-wider shrink-0">
+            {language === "id" ? "Dalam Pengembangan" : "On-going Feature"}
+          </span>
         </div>
         <div className="flex-1 overflow-y-auto border border-border rounded-xl p-4 space-y-4 bg-slate-50/50 scrollbar-none">
           {chatHistory.map((msg) => (

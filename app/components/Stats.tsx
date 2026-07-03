@@ -31,7 +31,7 @@ export default function Stats() {
         {/* Heading Section */}
         <div className="max-w-2xl mx-auto mb-16 md:mb-20">
           <motion.h2
-            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-4"
+            className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -40,7 +40,7 @@ export default function Stats() {
             {t("stats_title")}
           </motion.h2>
           <motion.p
-            className="text-base sm:text-lg text-slate-500 dark:text-slate-400 font-light"
+            className="text-base sm:text-lg text-slate-500 font-light"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -66,7 +66,7 @@ export default function Stats() {
             <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
               {t("stats_num1")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
               {t("stats_lbl1")}
             </span>
           </motion.div>
@@ -74,12 +74,12 @@ export default function Stats() {
           {/* Stat 2 with divider */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80 dark:border-green-900/30"
+            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80"
           >
             <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
               {t("stats_num2")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
               {t("stats_lbl2")}
             </span>
           </motion.div>
@@ -87,12 +87,12 @@ export default function Stats() {
           {/* Stat 3 with divider */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80 dark:border-green-900/30"
+            className="flex flex-col items-center px-6 md:px-8 py-4 text-center md:border-l border-slate-200/80"
           >
             <span className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-glucofy-gradient tracking-tight mb-4">
               {t("stats_num3")}
             </span>
-            <span className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-[220px] font-medium leading-relaxed">
+            <span className="text-sm sm:text-base text-slate-500 max-w-[220px] font-medium leading-relaxed">
               {t("stats_lbl3")}
             </span>
           </motion.div>

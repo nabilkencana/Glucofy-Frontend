@@ -84,6 +84,7 @@ export default function ScannerPage() {
         servingSizeMl: serving ? parseFloat(serving) : undefined,
       });
       setResult(log);
+      toast(t("scan_added_toast"));
       reloadHistory();
     } catch (err: unknown) {
       const msg =

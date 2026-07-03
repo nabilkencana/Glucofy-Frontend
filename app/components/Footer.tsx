@@ -9,7 +9,7 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-background border-t border-slate-200/50 dark:border-green-900/30 py-10 md:py-16 transition-colors duration-200">
+    <footer className="bg-background border-t border-slate-200/50 py-10 md:py-16 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-left">
         
         {/* Left: Logo */}
@@ -33,20 +33,20 @@ export default function Footer() {
         </Link>
 
         {/* Center: Navigation links */}
-        <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-slate-500 dark:text-slate-400 font-light">
-          <Link href="#about" className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+        <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-slate-500 font-light">
+          <Link href="#about" className="hover:text-slate-900 transition-colors">
             {t("footer_about")}
           </Link>
-          <Link href="#contact" className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+          <Link href="#contact" className="hover:text-slate-900 transition-colors">
             {t("footer_contact")}
           </Link>
-          <Link href="#privacy" className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+          <Link href="#privacy" className="hover:text-slate-900 transition-colors">
             {t("footer_privacy")}
           </Link>
         </nav>
 
         {/* Right: Copyright */}
-        <div className="text-sm text-slate-400 dark:text-slate-500 font-light">
+        <div className="text-sm text-slate-400 font-light">
           &copy; {currentYear} Glucofy. {t("footer_rights")}
         </div>
 
