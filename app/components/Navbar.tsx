@@ -30,6 +30,7 @@ export default function Navbar() {
     { href: "#features", label: t("nav_features") },
     { href: "#how-it-works", label: t("nav_how_it_works") },
     { href: "#stats", label: t("nav_why_glucofy") },
+    { href: "/pricing", label: t("nav_pricing") },
   ];
 
   return (

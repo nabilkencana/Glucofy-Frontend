@@ -46,6 +46,7 @@ export async function getMyProfile(): Promise<UserProfile> {
   return apiFetch<UserProfile>("/users/me");
 }
 
+
 /**
  * PATCH /users/me/health-profile
  * All fields are optional — only send what changed.

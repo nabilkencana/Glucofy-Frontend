@@ -7,9 +7,10 @@ import { apiFetch } from "./client";
 
 export interface SummarizeResponse {
   recommendation: string;
-  bmi: number;
+  // bmi is null until the user's health profile has weight + height set.
+  bmi: number | null;
   bmiCategory: string;
-  avgDailySugar: number;
+  avgDailySugar: number | null;
   tips: string[];
 }
 

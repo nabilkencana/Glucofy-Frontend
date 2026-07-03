@@ -4,7 +4,7 @@
  * On success, the accessToken is persisted automatically.
  */
 
-import { apiFetch, setToken } from "./client";
+import { apiFetch, setToken, clearToken } from "./client";
 
 export interface AuthResponse {
   accessToken: string;
@@ -41,4 +41,11 @@ export async function login(input: LoginInput): Promise<AuthResponse> {
   });
   setToken(res.accessToken);
   return res;
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await apiFetch("/auth/logout", { method: "POST" });
+  } catch {}
+  clearToken();
 }

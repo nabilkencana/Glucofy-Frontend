@@ -9,7 +9,7 @@
 export { ApiError, getToken, setToken, clearToken, BASE_URL } from "./client";
 
 // Auth
-export { register, login } from "./auth.service";
+export { register, login, logout } from "./auth.service";
 export type { AuthResponse, RegisterInput, LoginInput } from "./auth.service";
 
 // User & health profile

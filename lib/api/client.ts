@@ -7,9 +7,7 @@
  * - Throws ApiError on non-2xx responses.
  */
 
-export const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "https://glucofy-be-production.up.railway.app/api/v1";
+export const BASE_URL = "/api/v1";
 
 export const TOKEN_KEY = "glucofy:token";
 

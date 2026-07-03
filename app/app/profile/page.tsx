@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   getMyProfile,
   updateHealthProfile,
-  clearToken,
+  logout,
   type HealthProfileInput,
 } from "@/lib/api";
 
@@ -30,6 +30,7 @@ export default function ProfilePage() {
   // Profile fields (from GET /users/me)
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("USER");
 
   // Health profile fields (from PATCH /users/me/health-profile)
   const [age, setAge] = useState<number | "">("");
@@ -46,11 +47,23 @@ export default function ProfilePage() {
 
   useEffect(() => {
     getMyProfile()
-      .then((u) => {
+      .then((u: any) => {
         setName(u.name);
         setEmail(u.email);
+        setRole(u.role);
+        
+        // Coba periksa apakah data health profile ada di object user
+        // (Bisa di root `u` atau bersarang di `u.healthProfile`)
+        const hp = u.healthProfile || u;
+        
+        if (hp.age) setAge(hp.age);
+        if (hp.weight) setWeight(hp.weight);
+        if (hp.height) setHeight(hp.height);
+        if (hp.gender) setGender(hp.gender);
+        if (hp.activityLevel) setActivityLevel(hp.activityLevel);
+        if (hp.dailySugarLimit) setDailySugarLimit(hp.dailySugarLimit);
       })
-      .catch(() => {})
+      .catch((e) => console.error("Error fetching profile:", e))
       .finally(() => setLoading(false));
   }, []);
 
@@ -75,8 +88,8 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogout = () => {
-    clearToken();
+  const handleLogout = async () => {
+    await logout();
     router.push("/login");
   };
 
@@ -219,10 +232,17 @@ export default function ProfilePage() {
       <div className={cn(cardStyle, "flex items-center justify-between")}>
         <div>
           <h2 className="text-lg font-semibold text-foreground">{t("profile_section_plan")}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{t("profile_plan_desc")}</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {role === "PREMIUM" ? t("profile_plan_desc_premium") : t("profile_plan_desc")}
+          </p>
         </div>
-        <span className="inline-flex items-center justify-center rounded-full bg-[#63C71B] px-3.5 py-1 text-xs font-semibold text-white shadow-soft">
-          {t("profile_plan_badge")}
+        <span
+          className={cn(
+            "inline-flex items-center justify-center rounded-full px-3.5 py-1 text-xs font-semibold text-white shadow-soft",
+            role === "PREMIUM" ? "bg-glucofy-gradient" : "bg-[#63C71B]"
+          )}
+        >
+          {role === "PREMIUM" ? t("profile_plan_badge_premium") : t("profile_plan_badge")}
         </span>
       </div>
 

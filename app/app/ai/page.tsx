@@ -257,10 +257,22 @@ export default function AIPage() {
                 ))}
               </div>
             )}
-            <div className="flex gap-4 text-xs text-muted-foreground pt-2 border-t border-border/40">
-              <span>BMI: <strong className="text-foreground">{aiData.bmi.toFixed(1)}</strong> ({aiData.bmiCategory})</span>
-              <span>Avg daily sugar: <strong className="text-foreground">{aiData.avgDailySugar.toFixed(1)}g</strong></span>
-            </div>
+            {(aiData.bmi != null || aiData.avgDailySugar != null) && (
+              <div className="flex flex-wrap gap-4 text-xs text-muted-foreground pt-2 border-t border-border/40">
+                {aiData.bmi != null && (
+                  <span>
+                    BMI: <strong className="text-foreground">{aiData.bmi.toFixed(1)}</strong>
+                    {aiData.bmiCategory ? ` (${aiData.bmiCategory})` : ""}
+                  </span>
+                )}
+                {aiData.avgDailySugar != null && (
+                  <span>
+                    Avg daily sugar:{" "}
+                    <strong className="text-foreground">{aiData.avgDailySugar.toFixed(1)}g</strong>
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
