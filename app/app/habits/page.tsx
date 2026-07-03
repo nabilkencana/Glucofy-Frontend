@@ -1,92 +1,112 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Flame, TrendingUp, Lightbulb, Inbox } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Flame, TrendingUp, Lightbulb, Loader2 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import {
-  useLog,
-  SUGAR_LIMIT,
-  dateKey,
-  entriesForDate,
-  type LogEntry,
-  type Grade,
-} from "../_lib/log-store";
-import { GradeBadge } from "../_components/grade-badge";
+  getLastConsumption,
+  getDashboardSummary,
+  getWeeklyChart,
+  type ConsumptionLog,
+  type DashboardSummary,
+  type WeeklyChartResponse,
+} from "@/lib/api";
 import { cn } from "@/lib/utils";
 
-const cardStyle = "rounded-2xl border border-border bg-card text-card-foreground p-6 shadow-soft transition-all duration-300 hover:shadow-md";
+const cardStyle = "rounded-2xl border border-border bg-card text-card-foreground p-6 shadow-soft transition-all duration-300 hover:shadow-md border-primary/10";
 
-function dayTotal(entries: LogEntry[], key: string) {
-  return entriesForDate(entries, key).reduce((s, e) => s + e.totalSugar, 0);
-}
+// date helpers (local time)
+const dateKey = (d: Date | number) => {
+  const dt = new Date(d);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+};
 
-function streakLengths(entries: LogEntry[]) {
-  if (entries.length === 0) return { current: 0, longest: 0 };
-
-  const loggedDates = Array.from(new Set(entries.map((e) => dateKey(e.ts)))).sort();
-  if (loggedDates.length === 0) return { current: 0, longest: 0 };
-
-  const todayStr = dateKey(Date.now());
-  const datesSet = new Set(loggedDates);
-
-  const firstDate = new Date(loggedDates[0]);
-  const endDate = new Date();
-  firstDate.setHours(0, 0, 0, 0);
-  endDate.setHours(0, 0, 0, 0);
-
-  let current = 0;
-  let longest = 0;
-  let tempDate = new Date(firstDate);
-
-  while (tempDate <= endDate) {
-    const key = dateKey(tempDate);
-    const hasLog = datesSet.has(key);
-
-    if (hasLog) {
-      current++;
-      longest = Math.max(longest, current);
-    } else {
-      // Skip day: breaks streak unless it's today
-      if (key !== todayStr) {
-        current = 0;
-      }
-    }
-    tempDate.setDate(tempDate.getDate() + 1);
-  }
-
-  return { current, longest: Math.max(longest, current) };
-}
+const gradeMap: Record<string, "A" | "B" | "C" | "D" | "E"> = {
+  A: "A", B: "B", C: "C", D: "D",
+};
 
 export default function HabitsPage() {
   const { t, language } = useLanguage();
-  const { ready, entries } = useLog();
+  const [loading, setLoading] = useState(true);
   const [now] = useState(() => Date.now());
+  const [logs, setLogs] = useState<ConsumptionLog[]>([]);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [weeklyData, setWeeklyData] = useState<WeeklyChartResponse | null>(null);
 
-  // Calculate stats
-  const { current: streak, longest } = ready
-    ? streakLengths(entries)
-    : { current: 0, longest: 0 };
+  const loadData = async () => {
+    try {
+      const [l, s, w] = await Promise.all([
+        getLastConsumption(),
+        getDashboardSummary(),
+        getWeeklyChart(),
+      ]);
+      setLogs(l.data);
+      setSummary(s);
+      setWeeklyData(w);
+    } catch (err) {
+      console.error("Failed to load habits data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const loggedDaysList = useMemo(() => {
-    if (!ready) return [];
-    return Array.from(new Set(entries.map((e) => dateKey(e.ts))));
-  }, [entries, ready]);
+  useEffect(() => {
+    loadData();
+  }, []);
 
+  const limit = summary?.dailyLimit ?? 25;
+  const streak = summary?.currentStreak ?? 0;
+  const longest = summary?.longestStreak ?? 0;
+
+  // Build a consolidated map of logged days: YYYY-MM-DD -> totalSugar
+  const loggedDays = useMemo(() => {
+    const daysMap = new Map<string, number>();
+
+    // 1. Group recent logs by date
+    logs.forEach((log) => {
+      const key = log.consumedAt.split("T")[0];
+      const sugar = (log.sugarPer100ml * log.servingSizeMl) / 100;
+      daysMap.set(key, (daysMap.get(key) ?? 0) + sugar);
+    });
+
+    // 2. Overwrite with weekly chart data (ground truth for last 7 days)
+    weeklyData?.data.forEach((p) => {
+      if (p.totalSugar > 0 || p.logCount > 0) {
+        daysMap.set(p.date, p.totalSugar);
+      } else {
+        daysMap.delete(p.date);
+      }
+    });
+
+    return daysMap;
+  }, [logs, weeklyData]);
+
+  const loggedDaysList = useMemo(() => Array.from(loggedDays.keys()), [loggedDays]);
   const loggedDaysCount = loggedDaysList.length;
 
-  // Grade counts for distribution
+  // Compute adherence rate
+  const adherenceStats = useMemo(() => {
+    if (loggedDaysCount === 0) {
+      return { rate: 100, healthy: 0, bad: 0 };
+    }
+    const healthy = loggedDaysList.filter((key) => {
+      const totalSugar = loggedDays.get(key) ?? 0;
+      return totalSugar <= limit;
+    }).length;
+    const bad = loggedDaysCount - healthy;
+    const rate = Math.round((healthy / loggedDaysCount) * 100);
+    return { rate, healthy, bad };
+  }, [loggedDays, loggedDaysList, loggedDaysCount, limit]);
+
+  // Grade counts for distribution (from recent logs)
   const gradeCounts = useMemo(() => {
     const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
-    if (!ready) return counts;
-    entries.forEach((e) => {
-      if (counts[e.grade] !== undefined) counts[e.grade]++;
+    logs.forEach((e) => {
+      const grade = gradeMap[e.nutriGrade] ?? "A";
+      if (counts[grade] !== undefined) counts[grade]++;
     });
     return counts;
-  }, [entries, ready]);
-
-  const maxGradeCount = useMemo(() => {
-    return Math.max(...Object.values(gradeCounts), 1);
-  }, [gradeCounts]);
+  }, [logs]);
 
   const totalGradesCount = useMemo(() => {
     return Object.values(gradeCounts).reduce((a, b) => a + b, 0);
@@ -95,15 +115,12 @@ export default function HabitsPage() {
   const segments = useMemo(() => {
     if (totalGradesCount === 0) return [];
     
-    const activeGrades = (["A", "B", "C", "D", "E"] as Grade[])
+    const activeGrades = (["A", "B", "C", "D", "E"] as const)
       .map((grade) => ({ grade, count: gradeCounts[grade] || 0 }))
       .filter((g) => g.count > 0);
 
     const radius = 40;
     const circumference = 2 * Math.PI * radius; // ~251.327
-    
-    // gap between segments (4px if multiple segments exist, otherwise 0)
-    // ponytail: gap spacing is applied dynamically to provide gaps only when separate segments exist
     const gap = activeGrades.length > 1 ? 4 : 0;
     let accumulatedStroke = 0;
     
@@ -132,8 +149,6 @@ export default function HabitsPage() {
   }, [gradeCounts, totalGradesCount]);
 
   // Generate flat array of 84 dates for the 12-week heatmap (7 rows, 12 columns)
-  // rendered via grid-flow-col grid-rows-7.
-  // ponytail: flat array mapped to grid-flow-col avoids nested loops & aligns days of week perfectly
   const heatmapDays = useMemo(() => {
     const today = new Date(now);
     const todayDay = today.getDay(); // 0 is Sunday, 6 is Saturday
@@ -173,19 +188,6 @@ export default function HabitsPage() {
     return labels;
   }, [heatmapDays, language]);
 
-  // Compute adherence rate
-  const adherenceStats = useMemo(() => {
-    if (loggedDaysCount === 0) {
-      return { rate: 100, healthy: 0, bad: 0 };
-    }
-    const healthy = loggedDaysList.filter(
-      (key) => dayTotal(entries, key) <= SUGAR_LIMIT
-    ).length;
-    const bad = loggedDaysCount - healthy;
-    const rate = Math.round((healthy / loggedDaysCount) * 100);
-    return { rate, healthy, bad };
-  }, [entries, loggedDaysList, loggedDaysCount]);
-
   // Format date nicely based on active locale
   const formatDateLabel = (d: Date) => {
     return d.toLocaleDateString(language === "id" ? "id-ID" : "en-US", {
@@ -202,15 +204,11 @@ export default function HabitsPage() {
       return t("habits_insights_empty");
     }
 
-    const underLimitDaysCount = loggedDaysList.filter(
-      (key) => dayTotal(entries, key) <= SUGAR_LIMIT
-    ).length;
-
-    const pctUnder = Math.round((underLimitDaysCount / loggedDaysCount) * 100);
+    const pctUnder = adherenceStats.rate;
 
     if (language === "id") {
       if (pctUnder === 100) {
-        return "Luar biasa! 100% hari tercatat berada di bawah batas gula harian (25g). Pertahankan konsistensi ini untuk kesehatan jangka panjangmu!";
+        return `Luar biasa! 100% hari tercatat berada di bawah batas gula harian (${limit}g). Pertahankan konsistensi ini untuk kesehatan jangka panjangmu!`;
       } else if (pctUnder >= 75) {
         return `Bagus sekali! ${pctUnder}% hari tercatat berada di bawah batas rekomendasi. Kamu melakukan pekerjaan yang sangat baik dalam mengontrol konsumsi gula harian.`;
       } else if (pctUnder >= 50) {
@@ -220,7 +218,7 @@ export default function HabitsPage() {
       }
     } else {
       if (pctUnder === 100) {
-        return "Amazing! 100% of your logged days are under the daily sugar limit (25g). Keep up this perfect consistency for your long-term health!";
+        return `Amazing! 100% of your logged days are under the daily sugar limit (${limit}g). Keep up this perfect consistency for your long-term health!`;
       } else if (pctUnder >= 75) {
         return `Great job! ${pctUnder}% of your logged days are under the recommended limit. You are doing a fantastic job managing your daily sugar intake.`;
       } else if (pctUnder >= 50) {
@@ -230,6 +228,14 @@ export default function HabitsPage() {
       }
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
@@ -331,10 +337,9 @@ export default function HabitsPage() {
                   <div className="grid grid-flow-col grid-rows-7 gap-1.5 w-max">
                     {heatmapDays.map((day, index) => {
                       const key = dateKey(day);
-                      const dayEntries = ready ? entriesForDate(entries, key) : [];
-                      const hasData = dayEntries.length > 0;
-                      const totalSugar = dayTotal(entries, key);
-                      const isOverLimit = totalSugar > SUGAR_LIMIT;
+                      const hasData = loggedDays.has(key);
+                      const totalSugar = loggedDays.get(key) ?? 0;
+                      const isOverLimit = totalSugar > limit;
                       const isFuture = day.getTime() > now;
 
                       let cellColorClass = "bg-[#F1F3F5] hover:bg-slate-200/80"; // No data default
@@ -399,8 +404,8 @@ export default function HabitsPage() {
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {language === "id" 
-                  ? "Analisis ini memantau persentase kepatuhan konsumsi gula harian Anda di bawah batas WHO (25g)."
-                  : "This analysis monitors your daily sugar consumption adherence rate under the WHO limit (25g)."}
+                  ? `Analisis ini memantau persentase kepatuhan konsumsi gula harian Anda di bawah batas target (${limit}g).`
+                  : `This analysis monitors your daily sugar consumption adherence rate under your limit (${limit}g).`}
               </p>
             </div>
 
@@ -464,7 +469,7 @@ export default function HabitsPage() {
 
       {/* Bottom Insights and Grade Distribution Row */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
-        {/* Tips Box (Aligned horizontally, matches the screenshot) */}
+        {/* Tips Box (Aligned horizontally) */}
         <div className={cn(cardStyle, "lg:col-span-2 flex items-center gap-3 p-5 min-h-[64px]")}>
           <div className="flex h-6 w-6 items-center justify-center text-[#63C71B]">
             <Lightbulb className="h-5 w-5" />
@@ -472,11 +477,11 @@ export default function HabitsPage() {
           <p className="text-sm text-foreground font-medium">
             {language === "id" ? (
               streak > 0 
-                ? `Kamu sedang dalam streak ${streak} hari di bawah batas 25g. Pertahankan!`
+                ? `Kamu sedang dalam streak ${streak} hari di bawah batas ${limit}g. Pertahankan!`
                 : "Mulai kebiasaan sehat hari ini! Catat minuman rendah gulamu untuk memulai streak."
             ) : (
               streak > 0
-                ? `You're on a ${streak}-day streak under your 25g limit. Keep it up!`
+                ? `You're on a ${streak}-day streak under your ${limit}g limit. Keep it up!`
                 : "Start a healthy habit today! Log your low-sugar drinks to start a streak."
             )}
           </p>

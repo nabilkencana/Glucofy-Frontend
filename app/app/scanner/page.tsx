@@ -1,12 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Upload, Sparkles, Inbox } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { Upload, Sparkles, Inbox, AlertCircle } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
-import { useLog, gradeForSugar } from "../_lib/log-store";
 import { useToast } from "../_components/toast";
 import { GradeBadge } from "../_components/grade-badge";
 import { cn } from "@/lib/utils";
+import {
+  scanLabel,
+  createManualEntry,
+  getLastConsumption,
+  type ConsumptionLog,
+  type NutriGrade,
+} from "@/lib/api";
 
 const card = "rounded-lg border bg-card text-card-foreground shadow-sm";
 const inputClass =
@@ -15,14 +21,12 @@ const labelClass = "text-sm font-medium leading-none";
 const btnBrand =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 bg-brand-gradient text-white shadow-soft transition-all hover:opacity-95 disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-4 [&_svg]:shrink-0";
 
-interface Result {
-  product: string;
-  sugarPer100ml: number;
-  servingMl: number;
-}
+const gradeMap: Record<NutriGrade, "A" | "B" | "C" | "D" | "E"> = {
+  A: "A", B: "B", C: "C", D: "D",
+};
 
-const fmtTime = (ts: number) =>
-  new Date(ts).toLocaleString("en-US", {
+const fmtTime = (iso: string) =>
+  new Date(iso).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -30,63 +34,95 @@ const fmtTime = (ts: number) =>
     hour12: true,
   });
 
+function Skel({ className }: { className?: string }) {
+  return <div className={cn("animate-pulse rounded bg-muted", className)} />;
+}
+
 export default function ScannerPage() {
-  const { t } = useLanguage();
-  const { ready, scans, logScan } = useLog();
+  const { t, language } = useLanguage();
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Manual form state
   const [product, setProduct] = useState("");
   const [sugar, setSugar] = useState("");
   const [serving, setServing] = useState("");
-  const [result, setResult] = useState<Result | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [adding, setAdding] = useState(false);
+  const [salt, setSalt] = useState("0");
+  const [fat, setFat] = useState("0");
 
-  // ponytail: a frontend clone can't OCR an arbitrary nutrition label, so the
-  // upload path simulates analysis with a random sugar value (ceiling: no real
-  // parsing — wire to a vision API to read actual labels).
-  const handleFile = (file: File | undefined) => {
-    if (!file) return;
-    setResult(null);
-    setAnalyzing(true);
-    window.setTimeout(() => {
-      const randomSugar = Math.round(Math.random() * 250) / 10; // 0.0–25.0 g/100ml
-      setResult({
-        product: file.name.replace(/\.[^.]+$/, "") || "Produk",
-        sugarPer100ml: randomSugar,
-        servingMl: 250,
-      });
-      setAnalyzing(false);
-    }, 1200);
+  // Scan result (from scan or manual)
+  const [result, setResult] = useState<ConsumptionLog | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  // Scan history from API
+  const [history, setHistory] = useState<ConsumptionLog[] | null>(null);
+  const [histLoading, setHistLoading] = useState(true);
+
+  const reloadHistory = () => {
+    getLastConsumption()
+      .then((r) => setHistory(r.data))
+      .catch(() => {})
+      .finally(() => setHistLoading(false));
   };
 
-  const handleAnalyze = (e: React.FormEvent) => {
+  useEffect(() => {
+    reloadHistory();
+  }, []);
+
+  // Step 1-2-3 scan flow via real API
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    setResult(null);
+    setError(null);
+    setAnalyzing(true);
+    try {
+      const log = await scanLabel({
+        file,
+        contentType: file.type === "image/png" ? "image/png" : "image/jpeg",
+        productName: product.trim() || undefined,
+        servingSizeMl: serving ? parseFloat(serving) : undefined,
+      });
+      setResult(log);
+      reloadHistory();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Scan failed. Try adding serving size manually.";
+      setError(msg);
+      toast(msg);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  // Manual entry via API
+  const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     const s = parseFloat(sugar);
     if (Number.isNaN(s)) return;
-    setResult({
-      product: product.trim() || "Produk",
-      sugarPer100ml: s,
-      servingMl: parseFloat(serving) || 100,
-    });
-  };
-
-  const handleAdd = () => {
-    if (!result) return;
-    setAdding(true);
-    window.setTimeout(() => {
-      logScan(result);
+    setResult(null);
+    setError(null);
+    setAnalyzing(true);
+    try {
+      const log = await createManualEntry({
+        productName: product.trim() || "Product",
+        servingSizeMl: parseFloat(serving) || 100,
+        sugarPer100ml: s,
+        saltPer100ml: parseFloat(salt) || 0,
+        saturatedFatPer100ml: parseFloat(fat) || 0,
+      });
+      setResult(log);
       toast(t("scan_added_toast"));
-      setResult(null);
-      setProduct("");
-      setSugar("");
-      setServing("");
-      setAdding(false);
-    }, 700);
+      reloadHistory();
+      setProduct(""); setSugar(""); setServing(""); setSalt("0"); setFat("0");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to log. Please try again.";
+      setError(msg);
+      toast(msg);
+    } finally {
+      setAnalyzing(false);
+    }
   };
-
-  const grade = result ? gradeForSugar(result.sugarPer100ml) : null;
 
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
@@ -96,9 +132,21 @@ export default function ScannerPage() {
         <p className="text-sm text-muted-foreground">{t("scan_subtitle")}</p>
       </div>
 
+      {error && (
+        <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+          <AlertCircle className="h-5 w-5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-semibold">
+              {language === "id" ? "Pemindaian Gagal" : "Scan Failed"}
+            </p>
+            <p className="text-muted-foreground/90">{error}</p>
+          </div>
+        </div>
+      )}
+
       {/* Upload + manual */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Upload */}
+        {/* Upload — real 3-step S3 scan */}
         <div className={cn(card, "p-6 border-primary/10")}>
           <h2 className="mb-4 font-semibold">{t("scan_upload_title")}</h2>
           <label
@@ -124,7 +172,7 @@ export default function ScannerPage() {
           </label>
         </div>
 
-        {/* Manual input */}
+        {/* Manual entry */}
         <div className={cn(card, "p-6 border-primary/10")}>
           <h2 className="mb-4 font-semibold">{t("scan_manual_title")}</h2>
           <form onSubmit={handleAnalyze} className="space-y-4">
@@ -162,38 +210,49 @@ export default function ScannerPage() {
                 />
               </div>
             </div>
-            <button type="submit" className={cn(btnBrand, "w-full")} disabled={sugar.trim() === ""}>
+            <button
+              type="submit"
+              className={cn(btnBrand, "w-full")}
+              disabled={sugar.trim() === "" || analyzing}
+            >
               <Sparkles />
-              {t("scan_analyze")}
+              {analyzing ? t("scan_upload_analyzing") : t("scan_analyze")}
             </button>
           </form>
         </div>
       </div>
 
-      {/* Result */}
-      {result && grade && (
+      {/* Result card — from API response */}
+      {result && (
         <div className={cn(card, "p-8 border-primary/20 shadow-soft")}>
           <div className="flex flex-col items-center gap-6 sm:flex-row">
-            <GradeBadge grade={grade.grade} size="lg" />
+            <GradeBadge grade={gradeMap[result.nutriGrade] ?? "A"} size="lg" />
             <div className="flex-1 text-center sm:text-left">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">{grade.label}</div>
-              <h2 className="text-2xl font-bold">{result.product}</h2>
-              <div className="mt-1 text-muted-foreground">
-                {result.sugarPer100ml} g sugar per 100ml · {result.servingMl} ml serving
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                Grade {result.nutriGrade}
               </div>
-              <p className="mt-3 text-sm">{grade.description}</p>
+              <h2 className="text-2xl font-bold">{result.productName}</h2>
+              <div className="mt-1 text-muted-foreground">
+                {result.sugarPer100ml}g sugar/100ml · {result.servingSizeMl}ml serving ·{" "}
+                <span className="font-semibold">
+                  {((result.sugarPer100ml * result.servingSizeMl) / 100).toFixed(1)}g total
+                </span>
+              </div>
             </div>
-            <button onClick={handleAdd} className={btnBrand} disabled={adding}>
-              {adding ? t("scan_adding") : t("scan_add_to_log")}
-            </button>
           </div>
         </div>
       )}
 
-      {/* Scan history */}
+      {/* Scan history — from GET /nutrition/last-consumption */}
       <div className={cn(card, "p-6 border-primary/10")}>
         <h2 className="mb-4 font-semibold">{t("scan_history_title")}</h2>
-        {!ready || scans.length === 0 ? (
+        {histLoading ? (
+          <div className="space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <Skel key={i} className="h-12 w-full" />
+            ))}
+          </div>
+        ) : !history || history.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
             <Inbox className="mx-auto mb-3 h-8 w-8 opacity-60" />
             <p className="text-sm">{t("scan_history_empty")}</p>
@@ -210,14 +269,14 @@ export default function ScannerPage() {
                 </tr>
               </thead>
               <tbody>
-                {scans.map((s) => (
+                {history.map((s) => (
                   <tr key={s.id} className="border-b border-border/60 last:border-0">
-                    <td className="py-3 font-medium">{s.product}</td>
+                    <td className="py-3 font-medium">{s.productName}</td>
                     <td className="py-3">{s.sugarPer100ml}g</td>
                     <td className="py-3">
-                      <GradeBadge grade={s.grade} size="sm" />
+                      <GradeBadge grade={gradeMap[s.nutriGrade] ?? "A"} size="sm" />
                     </td>
-                    <td className="py-3 text-right text-muted-foreground">{fmtTime(s.ts)}</td>
+                    <td className="py-3 text-right text-muted-foreground">{fmtTime(s.consumedAt)}</td>
                   </tr>
                 ))}
               </tbody>

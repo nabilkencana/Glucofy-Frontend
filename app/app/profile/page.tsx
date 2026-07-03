@@ -5,51 +5,78 @@ import { useRouter } from "next/navigation";
 import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../_components/toast";
 import { cn } from "@/lib/utils";
+import {
+  getMyProfile,
+  updateHealthProfile,
+  clearToken,
+  type HealthProfileInput,
+} from "@/lib/api";
 
-const cardStyle = "rounded-2xl border border-border bg-card text-card-foreground p-6 shadow-soft transition-all duration-300 hover:shadow-md";
-const inputStyle = "mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors";
+const cardStyle =
+  "rounded-2xl border border-border bg-card text-card-foreground p-6 shadow-soft transition-all duration-300 hover:shadow-md";
+const inputStyle =
+  "mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors";
+const labelStyle = "text-xs font-semibold text-muted-foreground uppercase tracking-wider";
+
+function Skel({ className }: { className?: string }) {
+  return <div className={cn("animate-pulse rounded bg-muted", className)} />;
+}
 
 export default function ProfilePage() {
   const { t } = useLanguage();
   const toast = useToast();
   const router = useRouter();
 
-  // Load state from localStorage on mount
-  const [name, setName] = useState("nabilkencana");
-  const [email, setEmail] = useState("jojelek459@gmail.com");
-  const [age, setAge] = useState<number>(28);
-  const [targetLimit, setTargetLimit] = useState<number>(25);
+  // Profile fields (from GET /users/me)
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  // Health profile fields (from PATCH /users/me/health-profile)
+  const [age, setAge] = useState<number | "">("");
+  const [weight, setWeight] = useState<number | "">("");
+  const [height, setHeight] = useState<number | "">("");
+  const [gender, setGender] = useState<"MALE" | "FEMALE" | "">("");
+  const [activityLevel, setActivityLevel] = useState<
+    "SEDENTARY" | "LIGHT" | "MODERATE" | "ACTIVE" | ""
+  >("");
+  const [dailySugarLimit, setDailySugarLimit] = useState<number | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const savedName = localStorage.getItem("glucofy:profile_name");
-    const savedEmail = localStorage.getItem("glucofy:profile_email");
-    const savedAge = localStorage.getItem("glucofy:profile_age");
-    const savedTarget = localStorage.getItem("glucofy:profile_target");
-
-    if (savedName) setName(savedName);
-    if (savedEmail) setEmail(savedEmail);
-    if (savedAge) setAge(Number(savedAge));
-    if (savedTarget) setTargetLimit(Number(savedTarget));
+    getMyProfile()
+      .then((u) => {
+        setName(u.name);
+        setEmail(u.email);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleSaveChanges = (e: React.FormEvent) => {
+  const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    const payload: HealthProfileInput = {};
+    if (age !== "") payload.age = Number(age);
+    if (weight !== "") payload.weight = Number(weight);
+    if (height !== "") payload.height = Number(height);
+    if (gender) payload.gender = gender;
+    if (activityLevel) payload.activityLevel = activityLevel;
 
-    localStorage.setItem("glucofy:profile_name", name);
-    localStorage.setItem("glucofy:profile_email", email);
-    localStorage.setItem("glucofy:profile_age", String(age));
-    localStorage.setItem("glucofy:profile_target", String(targetLimit));
-
-    // Also update global store key if it existed, otherwise just toast
-    toast(t("profile_save_toast"));
+    try {
+      const res = await updateHealthProfile(payload);
+      setDailySugarLimit(res.dailySugarLimit);
+      toast(t("profile_save_toast"));
+    } catch {
+      toast("Failed to save. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleLogout = () => {
-    // Clear user simulation states if needed
-    localStorage.removeItem("glucofy:profile_name");
-    localStorage.removeItem("glucofy:profile_email");
-    
-    // Redirect to login page
+    clearToken();
     router.push("/login");
   };
 
@@ -61,79 +88,129 @@ export default function ProfilePage() {
         <p className="text-sm text-muted-foreground">{t("profile_subtitle")}</p>
       </div>
 
-      {/* Account Settings Form Card */}
-      <form onSubmit={handleSaveChanges} className={cardStyle}>
+      {/* Account info — read-only from API */}
+      <div className={cardStyle}>
         <h2 className="text-lg font-semibold text-foreground mb-4">{t("profile_section_account")}</h2>
-        
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Full Name */}
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t("profile_name_label")}
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className={inputStyle}
-            />
+            <label className={labelStyle}>{t("profile_name_label")}</label>
+            {loading ? (
+              <Skel className="mt-1.5 h-10 w-full" />
+            ) : (
+              <input
+                type="text"
+                value={name}
+                readOnly
+                className={cn(inputStyle, "cursor-default opacity-70")}
+              />
+            )}
           </div>
-
-          {/* Email Address */}
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t("profile_email_label")}
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={inputStyle}
-            />
+            <label className={labelStyle}>{t("profile_email_label")}</label>
+            {loading ? (
+              <Skel className="mt-1.5 h-10 w-full" />
+            ) : (
+              <input
+                type="email"
+                value={email}
+                readOnly
+                className={cn(inputStyle, "cursor-default opacity-70")}
+              />
+            )}
           </div>
+        </div>
+      </div>
 
+      {/* Health Profile form */}
+      <form onSubmit={handleSaveChanges} className={cardStyle}>
+        <h2 className="text-lg font-semibold text-foreground mb-1">
+          {t("profile_age_label")} &amp; Health Data
+        </h2>
+        {dailySugarLimit !== null && (
+          <p className="text-sm text-muted-foreground mb-4">
+            Personalized daily sugar limit:{" "}
+            <span className="font-bold text-primary">{dailySugarLimit.toFixed(1)}g</span>
+          </p>
+        )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* Age */}
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t("profile_age_label")}
-            </label>
+            <label className={labelStyle}>{t("profile_age_label")}</label>
             <input
               type="number"
               value={age}
-              onChange={(e) => setAge(Number(e.target.value))}
-              required
+              onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
               min="1"
-              max="120"
+              max="150"
+              placeholder="25"
               className={inputStyle}
             />
           </div>
-
-          {/* Daily Sugar Target */}
+          {/* Weight */}
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t("profile_target_label")}
-            </label>
+            <label className={labelStyle}>Weight (kg)</label>
             <input
               type="number"
-              value={targetLimit}
-              onChange={(e) => setTargetLimit(Number(e.target.value))}
-              required
+              value={weight}
+              onChange={(e) => setWeight(e.target.value === "" ? "" : Number(e.target.value))}
               min="1"
-              max="200"
+              placeholder="70"
               className={inputStyle}
             />
+          </div>
+          {/* Height */}
+          <div>
+            <label className={labelStyle}>Height (cm)</label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value === "" ? "" : Number(e.target.value))}
+              min="30"
+              placeholder="175"
+              className={inputStyle}
+            />
+          </div>
+          {/* Gender */}
+          <div>
+            <label className={labelStyle}>Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value as "MALE" | "FEMALE" | "")}
+              className={inputStyle}
+            >
+              <option value="">— select —</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+            </select>
+          </div>
+          {/* Activity */}
+          <div className="sm:col-span-2">
+            <label className={labelStyle}>Activity Level</label>
+            <select
+              value={activityLevel}
+              onChange={(e) =>
+                setActivityLevel(
+                  e.target.value as "SEDENTARY" | "LIGHT" | "MODERATE" | "ACTIVE" | ""
+                )
+              }
+              className={inputStyle}
+            >
+              <option value="">— select —</option>
+              <option value="SEDENTARY">Sedentary</option>
+              <option value="LIGHT">Light</option>
+              <option value="MODERATE">Moderate</option>
+              <option value="ACTIVE">Active</option>
+            </select>
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="mt-6">
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-xl bg-[#63C71B] hover:bg-[#63C71B]/95 text-white px-5 py-2.5 text-sm font-semibold shadow-soft transition-all duration-200 cursor-pointer"
+            disabled={saving}
+            className="inline-flex items-center justify-center rounded-xl bg-[#63C71B] hover:bg-[#63C71B]/95 text-white px-5 py-2.5 text-sm font-semibold shadow-soft transition-all duration-200 cursor-pointer disabled:opacity-60"
           >
-            {t("profile_save_btn")}
+            {saving ? "Saving…" : t("profile_save_btn")}
           </button>
         </div>
       </form>

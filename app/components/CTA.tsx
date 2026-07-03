@@ -35,7 +35,7 @@ export default function CTA() {
           {/* White CTA Button with Green Text */}
           <Link
             href="#signup"
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white hover:bg-slate-50 text-glucofy-green text-base font-semibold rounded-2xl transition-all duration-200 hover:-translate-y-0.5 shadow-md shadow-black/0.02"
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white hover:bg-slate-50 text-glucofy-green text-base font-semibold rounded-2xl transition-colors shadow-md"
           >
             <span>{t("cta_btn")}</span>
             <ArrowRight className="w-4.5 h-4.5 text-glucofy-green" />

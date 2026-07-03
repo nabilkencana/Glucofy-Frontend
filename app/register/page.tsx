@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Globe, ArrowLeft } from "lucide-react";
+import { Globe, ArrowLeft, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { register } from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,20 +15,50 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  // Login/registration is disabled for now — no real account is created.
-  // A valid submit just enters the dashboard.
-  const handleRegister = (e: React.FormEvent) => {
+  // Eagerly prefetch pages
+  useEffect(() => {
+    router.prefetch("/login");
+    router.prefetch("/app");
+  }, [router]);
+
+  const clearError = () => { if (error) setError(null); };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-      alert(language === "en" ? "Passwords do not match!" : "Kata sandi tidak cocok!");
+      setError(language === "en" ? "Passwords do not match." : "Kata sandi tidak cocok.");
       return;
     }
-    router.push("/app");
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await register({ name, email, password });
+      // Token stored automatically by the service
+      setSuccess(true);
+      setTimeout(() => router.push("/app"), 800);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Registration failed. Please try again.";
+      setError(msg);
+      setIsLoading(false);
+    }
   };
 
+  const inputClass =
+    "w-full px-4 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)] disabled:opacity-60";
+  const labelClass = "block text-sm font-semibold text-slate-800/85 mb-1.5";
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background text-foreground transition-colors duration-200">
+    <div className="min-h-screen flex flex-col md:flex-row bg-background text-foreground">
       {/* Left side brand banner (hidden on mobile) */}
       <div className="hidden md:flex flex-col justify-between w-[42%] bg-glucofy-gradient p-12 lg:p-16 text-white relative overflow-hidden shrink-0">
         {/* Logo */}
@@ -75,8 +106,8 @@ export default function RegisterPage() {
       <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-16 relative">
         {/* Light Refraction Background Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-          <div className="absolute -left-20 top-1/4 w-96 h-96 rounded-full bg-green-500/15 dark:bg-green-500/8 blur-[80px]" />
-          <div className="absolute right-10 bottom-1/4 w-[350px] h-[350px] rounded-full bg-green-400/15 dark:bg-green-600/8 blur-[100px]" />
+          <div className="absolute -left-20 top-1/4 w-96 h-96 rounded-full bg-green-500/15 blur-[80px]" />
+          <div className="absolute right-10 bottom-1/4 w-[350px] h-[350px] rounded-full bg-green-400/15 blur-[100px]" />
         </div>
 
         {/* Top actions toolbar */}
@@ -84,122 +115,165 @@ export default function RegisterPage() {
           {/* Back button */}
           <Link
             href="/"
-            className="flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+            className="flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>{language === "en" ? "Back" : "Kembali"}</span>
           </Link>
 
-          {/* Language controls */}
-          <div className="flex items-center gap-3">
-            {/* Language Switcher */}
-            <button
-              onClick={() => setLanguage(language === "en" ? "id" : "en")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-green-900/30 hover:bg-slate-50 dark:hover:bg-green-900/40 transition-colors text-xs font-semibold"
-              title={language === "en" ? "Ganti ke Bahasa Indonesia" : "Switch to English"}
-            >
-              <Globe className="w-3.5 h-3.5 text-slate-400" />
-              <span>{language === "en" ? "🇬🇧 EN" : "🇮🇩 ID"}</span>
-            </button>
-          </div>
+          {/* Language Switcher */}
+          <button
+            onClick={() => setLanguage(language === "en" ? "id" : "en")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-xs font-semibold"
+            title={language === "en" ? "Ganti ke Bahasa Indonesia" : "Switch to English"}
+          >
+            <Globe className="w-3.5 h-3.5 text-slate-400" />
+            <span>{language === "en" ? "🇬🇧 EN" : "🇮🇩 ID"}</span>
+          </button>
         </div>
 
         {/* Center: Card and registration form */}
         <div className="max-w-md w-full mx-auto my-auto py-8 z-10">
-          <div className="bg-liquid-glass p-8 sm:p-10 rounded-[32px] hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-900/5 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] relative overflow-hidden group">
+          <div className="bg-liquid-glass p-8 sm:p-10 rounded-[32px] relative overflow-hidden">
             {/* Subtle light reflections on card edge */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-white/30 via-white/0 to-white/0 pointer-events-none" />
             <div className="absolute top-0 bottom-0 left-0 w-px bg-gradient-to-b from-white/30 via-white/0 to-white/0 pointer-events-none" />
 
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
               {t("register_title")}
             </h2>
-            <p className="text-sm text-slate-700/70 dark:text-slate-400/80 mb-6 leading-relaxed">
+            <p className="text-sm text-slate-700/70 mb-6 leading-relaxed">
               {t("register_subtitle")}
             </p>
+
+            {/* Error banner */}
+            {error && (
+              <div className="flex items-start gap-2.5 mb-5 rounded-2xl bg-red-50 border border-red-200/70 px-4 py-3">
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700 leading-relaxed">{error}</p>
+              </div>
+            )}
+
+            {/* Success banner */}
+            {success && (
+              <div className="flex items-start gap-2.5 mb-5 rounded-2xl bg-green-50 border border-green-200/70 px-4 py-3">
+                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-green-700 leading-relaxed">
+                  {language === "id" ? "Akun berhasil dibuat! Mengarahkan…" : "Account created! Redirecting…"}
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Full Name field */}
               <div>
-                <label className="block text-sm font-semibold text-slate-800/85 dark:text-slate-200/90 mb-1.5">
-                  {t("register_name_label")}
-                </label>
+                <label className={labelClass}>{t("register_name_label")}</label>
                 <input
                   type="text"
                   required
                   placeholder="John Doe"
-                  className="w-full px-4 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+                  autoComplete="name"
+                  disabled={isLoading || success}
+                  className={inputClass}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); clearError(); }}
                 />
               </div>
 
               {/* Email field */}
               <div>
-                <label className="block text-sm font-semibold text-slate-800/85 dark:text-slate-200/90 mb-1.5">
-                  {t("register_email_label")}
-                </label>
+                <label className={labelClass}>{t("register_email_label")}</label>
                 <input
                   type="email"
                   required
                   placeholder="name@example.com"
-                  className="w-full px-4 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+                  autoComplete="email"
+                  disabled={isLoading || success}
+                  className={inputClass}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); clearError(); }}
                 />
               </div>
 
               {/* Password field */}
               <div>
-                <label className="block text-sm font-semibold text-slate-800/85 dark:text-slate-200/90 mb-1.5">
-                  {t("register_password_label")}
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="w-full px-4 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <label className={labelClass}>{t("register_password_label")}</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={isLoading || success}
+                    className="w-full pl-4 pr-12 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)] disabled:opacity-60"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); clearError(); }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                    disabled={isLoading || success}
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               {/* Confirm Password field */}
               <div>
-                <label className="block text-sm font-semibold text-slate-800/85 dark:text-slate-200/90 mb-1.5">
-                  {t("register_confirm_password_label")}
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="w-full px-4 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <label className={labelClass}>{t("register_confirm_password_label")}</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={isLoading || success}
+                    className="w-full pl-4 pr-12 py-2.5 input-liquid-glass rounded-[18px] text-slate-900 placeholder:text-slate-400/75 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 transition-all duration-300 text-sm shadow-[0_2px_8px_rgba(0,0,0,0.02)] disabled:opacity-60"
+                    value={confirmPassword}
+                    onChange={(e) => { setConfirmPassword(e.target.value); clearError(); }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                    disabled={isLoading || success}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full mt-4 py-3 btn-glossy-green text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 hover:brightness-105 active:scale-[0.98] shadow-md shadow-green-600/20 text-sm"
+                disabled={isLoading || success}
+                className="w-full mt-4 py-3 btn-glossy-green text-white font-semibold rounded-2xl transition-all duration-150 hover:brightness-105 active:scale-[0.98] shadow-md shadow-green-600/20 text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {t("register_button")}
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isLoading
+                  ? (language === "id" ? "Membuat akun…" : "Creating account…")
+                  : t("register_button")}
               </button>
             </form>
 
             {/* Link to Login */}
-            <div className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+            <div className="text-center text-sm text-slate-500 mt-6">
               {t("register_has_account")}{" "}
-              <Link href="/login" className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 font-semibold transition-colors">
+              <button
+                type="button"
+                onClick={() => router.push("/login")}
+                className="text-green-600 hover:text-green-700 font-semibold"
+              >
                 {t("register_login_link")}
-              </Link>
+              </button>
             </div>
           </div>
         </div>
 
         {/* Footer for mobile only */}
-        <div className="md:hidden text-center text-xs text-slate-400 dark:text-slate-500">
+        <div className="md:hidden text-center text-xs text-slate-400">
           &copy; {new Date().getFullYear()} Glucofy. {t("footer_rights")}
         </div>
       </div>

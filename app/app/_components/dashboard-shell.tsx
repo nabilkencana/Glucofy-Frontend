@@ -17,10 +17,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { cn } from "@/lib/utils";
-
-// Login is disabled for now, so the greeting uses a fixed placeholder name.
-// This will be replaced by the authenticated user's name once login is wired up.
-const USER_NAME = "azura";
+import { getMyProfile, getToken, clearToken } from "@/lib/api";
 
 const NAV_ITEMS = [
   { href: "/app", labelKey: "dash_nav_dashboard", icon: LayoutDashboard },
@@ -43,6 +40,17 @@ export default function DashboardShell({
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.replace("/login");
+      return;
+    }
+    getMyProfile()
+      .then((u) => setUserName(u.name))
+      .catch(() => {});
+  }, [router]);
 
   // Sidebar follows the viewport: open on desktop, collapsed (drawer) on mobile.
   useEffect(() => {
@@ -61,10 +69,10 @@ export default function DashboardShell({
   const flag = language === "id" ? "🇮🇩" : "🇬🇧";
   const toggleLanguage = () => setLanguage(language === "en" ? "id" : "en");
 
-  // Login is disabled, so "exit" simply leaves the dashboard back to the landing page.
   const handleExit = () => {
     setMenuOpen(false);
-    router.push("/");
+    clearToken();
+    router.push("/login");
   };
 
   return (
@@ -149,7 +157,7 @@ export default function DashboardShell({
               <PanelLeft className="h-5 w-5" />
             </button>
             <p className="truncate text-sm text-foreground sm:text-base">
-              {t("dash_greeting")}, {USER_NAME} <span aria-hidden>👋</span>
+              {t("dash_greeting")}, {userName ?? "..."} <span aria-hidden>👋</span>
             </p>
           </div>
 
@@ -184,14 +192,6 @@ export default function DashboardShell({
                     >
                       <User className="h-4 w-4 text-muted-foreground" />
                       {t("menu_profile")}
-                    </Link>
-                    <Link
-                      href="/app/settings"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
-                    >
-                      <Settings className="h-4 w-4 text-muted-foreground" />
-                      {t("menu_settings")}
                     </Link>
                     <div className="my-1 h-px bg-border" />
                     <button

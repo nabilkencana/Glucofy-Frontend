@@ -78,14 +78,14 @@ export default function Hero() {
             >
               <Link
                 href="#cta"
-                className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-white bg-glucofy-gradient hover:opacity-95 transition-all duration-200 hover:-translate-y-0.5 shadow-sm shadow-green-500/10"
+                className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-white bg-glucofy-gradient hover:opacity-90 transition-opacity shadow-sm shadow-green-500/10"
               >
                 <span>{t("hero_cta_primary")}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-green-900/40 hover:bg-slate-50 dark:hover:bg-green-900/60 border border-slate-200/80 dark:border-green-900/30 transition-all duration-200 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 transition-colors"
               >
                 <Play className="w-4 h-4 fill-slate-500 dark:fill-slate-400 text-slate-500 dark:text-slate-400" />
                 <span>{t("hero_cta_secondary")}</span>

@@ -1,7 +1,7 @@
 import { SUGAR_LIMIT } from "../_lib/log-store";
 
 /** Daily total-sugar bar chart with an auto-scaled y-axis. Empty data → 0–4 axis. */
-export function SugarBarChart({ days, totals }: { days: Date[]; totals: number[] }) {
+export function SugarBarChart({ days, totals, limit = SUGAR_LIMIT }: { days: Date[]; totals: number[]; limit?: number }) {
   const W = 720;
   const H = 280;
   const padLeft = 46;
@@ -63,7 +63,7 @@ export function SugarBarChart({ days, totals }: { days: Date[]; totals: number[]
             width={barW}
             height={Math.max(0, h)}
             rx={4}
-            fill={v > SUGAR_LIMIT ? "hsl(var(--grade-e))" : "hsl(var(--primary))"}
+            fill={v > limit ? "hsl(var(--grade-e))" : "hsl(var(--primary))"}
           />
         );
       })}

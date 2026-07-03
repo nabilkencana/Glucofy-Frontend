@@ -1,25 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TriangleAlert, Timer, Trash2 } from "lucide-react";
+import { TriangleAlert, Timer, Loader2 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import {
-  useLog,
-  SUGAR_LIMIT,
-  dateKey,
-  entriesForDate,
-  totalForDate,
-} from "../_lib/log-store";
-import { useToast } from "../_components/toast";
+  getLastConsumption,
+  getDashboardSummary,
+  getWeeklyChart,
+  type ConsumptionLog,
+  type DashboardSummary,
+  type WeeklyChartResponse,
+} from "@/lib/api";
 import { GradeBadge } from "../_components/grade-badge";
 import { SugarBarChart } from "../_components/sugar-bar-chart";
 import { cn } from "@/lib/utils";
 
-const card = "rounded-lg border bg-card text-card-foreground shadow-sm";
+const card = "rounded-lg border bg-card text-card-foreground shadow-sm border-primary/10";
 
 const fmtNum = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1));
-const fmtTime = (ts: number) =>
-  new Date(ts).toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+const fmtTime = (iso: string) =>
+  new Date(iso).toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
 function sinceLabel(now: number, ts: number) {
   const diff = Math.max(0, now - ts);
@@ -28,33 +28,66 @@ function sinceLabel(now: number, ts: number) {
   return `${h}h ${m}m`;
 }
 
+// date helpers (local time)
+const dateKey = (d: Date | number) => {
+  const dt = new Date(d);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+};
+
+const gradeMap: Record<string, "A" | "B" | "C" | "D" | "E"> = {
+  A: "A", B: "B", C: "C", D: "D",
+};
+
 export default function TrackerPage() {
   const { t } = useLanguage();
-  const { ready, entries, removeEntry } = useLog();
-  const toast = useToast();
-
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"today" | "weekly">("today");
   const [selectedDate, setSelectedDate] = useState(() => dateKey(Date.now()));
   const [now, setNow] = useState(() => Date.now());
+  const [logs, setLogs] = useState<ConsumptionLog[]>([]);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [weeklyData, setWeeklyData] = useState<WeeklyChartResponse | null>(null);
 
-  // Keep the "since last entry" timer fresh.
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000);
     return () => window.clearInterval(id);
   }, []);
 
-  const dayEntries = ready ? entriesForDate(entries, selectedDate) : [];
-  const total = dayEntries.reduce((s, e) => s + e.totalSugar, 0);
-  const pct = Math.min(100, (total / SUGAR_LIMIT) * 100);
-  const ratio = (total / SUGAR_LIMIT) * 100;
-  const fill = ratio < 60 ? "bg-grade-b" : ratio < 90 ? "bg-grade-c" : "bg-grade-e";
-  const over = total > SUGAR_LIMIT;
-  const last = dayEntries[0];
-
-  const handleDelete = (id: string) => {
-    removeEntry(id);
-    toast(t("track_deleted_toast"));
+  const loadData = async () => {
+    try {
+      const [l, s, w] = await Promise.all([
+        getLastConsumption(),
+        getDashboardSummary(),
+        getWeeklyChart(),
+      ]);
+      setLogs(l.data);
+      setSummary(s);
+      setWeeklyData(w);
+    } catch (err) {
+      console.error("Failed to fetch tracker data:", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const limit = summary?.dailyLimit ?? 25;
+
+  const dayEntries = logs.filter((e) => {
+    const logDateStr = e.consumedAt.split("T")[0];
+    return logDateStr === selectedDate;
+  });
+
+  const total = dayEntries.reduce((s, e) => s + (e.sugarPer100ml * e.servingSizeMl) / 100, 0);
+  const pct = Math.min(100, (total / limit) * 100);
+  const ratio = (total / limit) * 100;
+  const fill = ratio < 60 ? "bg-grade-b" : ratio < 90 ? "bg-grade-c" : "bg-grade-e";
+  const over = total > limit;
+  const last = dayEntries[0];
+  const lastTs = last ? new Date(last.consumedAt).getTime() : 0;
 
   // Weekly data (last 7 days ending today)
   const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -62,11 +95,25 @@ export default function TrackerPage() {
     d.setDate(d.getDate() - (6 - i));
     return d;
   });
-  const weekTotals = weekDays.map((d) => (ready ? totalForDate(entries, dateKey(d)) : 0));
+
+  const weekTotals = weekDays.map((d) => {
+    const key = dateKey(d);
+    const pt = weeklyData?.data.find((p) => p.date === key);
+    return pt ? pt.totalSugar : 0;
+  });
+
   const weekAvg = weekTotals.reduce((a, b) => a + b, 0) / 7;
   const weekHigh = Math.max(...weekTotals);
   const weekLow = Math.min(...weekTotals);
-  const underCount = weekTotals.filter((v) => v <= SUGAR_LIMIT).length;
+  const underCount = weekTotals.filter((v) => v <= limit).length;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
@@ -108,7 +155,7 @@ export default function TrackerPage() {
               <TriangleAlert className="h-5 w-5 shrink-0 text-destructive" />
               <p>
                 <span className="font-semibold">
-                  {t("track_over_limit_pre")} {SUGAR_LIMIT}
+                  {t("track_over_limit_pre")} {limit}
                   {t("track_over_limit_suffix")}
                 </span>{" "}
                 {t("track_over_limit_post")}
@@ -122,7 +169,7 @@ export default function TrackerPage() {
               <div className="flex items-center justify-between">
                 <p className="font-semibold text-foreground">{t("track_total_running")}</p>
                 <span className="text-sm text-muted-foreground">
-                  {fmtNum(total)}g / {SUGAR_LIMIT}g
+                  {fmtNum(total)}g / {limit}g
                 </span>
               </div>
               <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -138,8 +185,8 @@ export default function TrackerPage() {
                 </p>
                 {last ? (
                   <>
-                    <p className="text-2xl font-bold text-foreground">{sinceLabel(now, last.ts)}</p>
-                    <p className="text-sm text-muted-foreground">{last.product}</p>
+                    <p className="text-2xl font-bold text-foreground">{sinceLabel(now, lastTs)}</p>
+                    <p className="text-sm text-muted-foreground">{last.productName}</p>
                   </>
                 ) : (
                   <>
@@ -169,27 +216,17 @@ export default function TrackerPage() {
                       <th className="pb-3 font-medium">{t("track_th_sugar")}</th>
                       <th className="pb-3 font-medium">{t("track_th_grade")}</th>
                       <th className="pb-3 font-medium">{t("track_th_time")}</th>
-                      <th className="pb-3 text-right font-medium">—</th>
                     </tr>
                   </thead>
                   <tbody>
                     {dayEntries.map((e) => (
                       <tr key={e.id} className="border-b border-border/60 last:border-0">
-                        <td className="py-3 font-medium">{e.product}</td>
-                        <td className="py-3">{fmtNum(e.totalSugar)}g</td>
+                        <td className="py-3 font-medium">{e.productName}</td>
+                        <td className="py-3">{fmtNum((e.sugarPer100ml * e.servingSizeMl) / 100)}g</td>
                         <td className="py-3">
-                          <GradeBadge grade={e.grade} size="sm" />
+                          <GradeBadge grade={gradeMap[e.nutriGrade] ?? "A"} size="sm" />
                         </td>
-                        <td className="py-3 text-muted-foreground">{fmtTime(e.ts)}</td>
-                        <td className="py-3 text-right">
-                          <button
-                            onClick={() => handleDelete(e.id)}
-                            aria-label="Delete entry"
-                            className="text-destructive/80 transition-colors hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </td>
+                        <td className="py-3 text-muted-foreground">{fmtTime(e.consumedAt)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -203,7 +240,7 @@ export default function TrackerPage() {
           {/* Weekly chart */}
           <div className={cn(card, "p-6")}>
             <h2 className="mb-2 font-semibold">{t("track_weekly_title")}</h2>
-            <SugarBarChart days={weekDays} totals={weekTotals} />
+            <SugarBarChart days={weekDays} totals={weekTotals} limit={limit} />
           </div>
 
           {/* Weekly stats */}
