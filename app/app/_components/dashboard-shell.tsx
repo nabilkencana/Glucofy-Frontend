@@ -18,6 +18,7 @@ import {
 import { useLanguage } from "../../context/LanguageContext";
 import { cn } from "@/lib/utils";
 import { getMyProfile, getToken, clearToken } from "@/lib/api";
+import { USFlag, IDFlag } from "../../components/Flag";
 
 const NAV_ITEMS = [
   { href: "/app", labelKey: "dash_nav_dashboard", icon: LayoutDashboard },
@@ -66,7 +67,6 @@ export default function DashboardShell({
     if (window.matchMedia("(max-width: 767px)").matches) setSidebarOpen(false);
   };
 
-  const flag = language === "id" ? "🇮🇩" : "🇬🇧";
   const toggleLanguage = () => setLanguage(language === "en" ? "id" : "en");
 
   const handleExit = () => {
@@ -165,9 +165,13 @@ export default function DashboardShell({
             <button
               onClick={toggleLanguage}
               aria-label="Toggle language"
-              className="grid h-9 w-9 place-items-center rounded-full text-base transition-colors hover:bg-muted"
+              className="grid h-9 w-9 place-items-center rounded-full transition-colors hover:bg-muted"
             >
-              {flag}
+              {language === "id" ? (
+                <IDFlag className="w-5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+              ) : (
+                <USFlag className="w-5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+              )}
             </button>
 
             {/* Profile menu */}

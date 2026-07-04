@@ -155,7 +155,7 @@ export default function ProfilePage() {
               onChange={(e) => setAge(e.target.value === "" ? "" : Number(e.target.value))}
               min="1"
               max="150"
-              placeholder="25"
+              placeholder={t("profile_age_placeholder")}
               className={inputStyle}
             />
           </div>
@@ -167,7 +167,7 @@ export default function ProfilePage() {
               value={weight}
               onChange={(e) => setWeight(e.target.value === "" ? "" : Number(e.target.value))}
               min="1"
-              placeholder="70"
+              placeholder={t("profile_weight_placeholder")}
               className={inputStyle}
             />
           </div>
@@ -179,7 +179,7 @@ export default function ProfilePage() {
               value={height}
               onChange={(e) => setHeight(e.target.value === "" ? "" : Number(e.target.value))}
               min="30"
-              placeholder="175"
+              placeholder={t("profile_height_placeholder")}
               className={inputStyle}
             />
           </div>

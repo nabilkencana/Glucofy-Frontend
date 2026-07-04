@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Scan, GlassWater, Flame, Sparkles } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -32,6 +33,7 @@ export default function Features() {
       description: "feat_scanner_desc",
       className: "col-span-1 md:col-span-7",
       colorClass: "bg-green-50  text-glucofy-green",
+      href: "#step-scan",
     },
     {
       icon: GlassWater,
@@ -39,6 +41,7 @@ export default function Features() {
       description: "feat_tracker_desc",
       className: "col-span-1 md:col-span-5",
       colorClass: "bg-blue-50  text-blue-600 ",
+      href: "#step-track",
     },
     {
       icon: Flame,
@@ -46,6 +49,7 @@ export default function Features() {
       description: "feat_habit_desc",
       className: "col-span-1 md:col-span-5",
       colorClass: "bg-amber-50  text-amber-500 ",
+      href: "#step-habit",
     },
     {
       icon: Sparkles,
@@ -53,6 +57,7 @@ export default function Features() {
       description: "feat_ai_desc",
       className: "col-span-1 md:col-span-7",
       colorClass: "bg-purple-50  text-purple-600 ",
+      href: "#step-ai",
     },
   ];
 
@@ -96,27 +101,33 @@ export default function Features() {
               <motion.div
                 key={idx}
                 variants={cardVariants}
-                className={`group bg-white  border border-slate-100/80  rounded-3xl p-8 lg:p-10 flex flex-col justify-between transition-all duration-300 hover:border-slate-200/80  hover:shadow-[0_8px_30px_rgba(15,23,42,0.015)] ${feature.className}`}
+                className={feature.className}
               >
-                <div>
-                  {/* Icon Badge */}
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-6 transition-transform group-hover:scale-105 duration-300 ${feature.colorClass}`}>
-                    <IconComponent className="w-6 h-6" />
+                <Link
+                  href={feature.href}
+                  className="group bg-white border border-slate-100/80 rounded-3xl p-8 lg:p-10 flex flex-col justify-between h-full transition-all duration-300 hover:border-slate-200/80 hover:shadow-[0_12px_40px_rgba(15,23,42,0.03)] hover:-translate-y-1.5 cursor-pointer text-left"
+                >
+                  <div>
+                    {/* Icon Badge */}
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-6 transition-transform group-hover:scale-105 duration-300 ${feature.colorClass}`}>
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+                    
+                    {/* Content */}
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-glucofy-green transition-colors duration-200">
+                      {t(feature.title)}
+                    </h3>
+                    <p className="text-slate-500 leading-relaxed font-light text-sm sm:text-base">
+                      {t(feature.description)}
+                    </p>
                   </div>
                   
-                  {/* Content */}
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-glucofy-green transition-colors duration-200">
-                    {t(feature.title)}
-                  </h3>
-                  <p className="text-slate-500 leading-relaxed font-light text-sm sm:text-base">
-                    {t(feature.description)}
-                  </p>
-                </div>
-                
-                {/* Visual bottom spacing */}
-                <div className="mt-8 pt-4 border-t border-slate-50/50 flex items-center text-xs font-semibold text-glucofy-green opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span>{t("feat_learn_more")} &rarr;</span>
-                </div>
+                  {/* Visual bottom spacing */}
+                  <div className="mt-8 pt-4 border-t border-slate-50/50 flex items-center text-xs font-semibold text-glucofy-green opacity-80 group-hover:opacity-100 transition-all duration-300">
+                    <span>{t("feat_learn_more")}</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1 ml-1">&rarr;</span>
+                  </div>
+                </Link>
               </motion.div>
             );
           })}

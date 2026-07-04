@@ -162,7 +162,6 @@ export default function Hero() {
                       <span className="text-green-500">B</span>
                       <span className="text-amber-500">C</span>
                       <span className="text-orange-500">D</span>
-                      <span className="text-red-500">E</span>
                     </div>
                   </div>
 

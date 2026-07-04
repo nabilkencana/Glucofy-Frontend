@@ -6,7 +6,6 @@ const GRADE_BG: Record<Grade, string> = {
   B: "bg-grade-b",
   C: "bg-grade-c",
   D: "bg-grade-d",
-  E: "bg-grade-e",
 };
 
 const SIZES = {

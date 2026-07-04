@@ -16,7 +16,7 @@ import {
 
 const cardStyle = "rounded-2xl border border-border bg-card text-card-foreground p-6 shadow-soft transition-all duration-300 hover:shadow-md";
 
-type Grade = "A" | "B" | "C" | "D" | "E";
+type Grade = "A" | "B" | "C" | "D";
 
 interface ChatMessage {
   id: string;
@@ -48,7 +48,6 @@ export default function AIPage() {
     B: "bg-[#63C71B]",
     C: "bg-[#F5A623]",
     D: "bg-[#F56223]",
-    E: "bg-[#E53E3E]",
   };
 
   const fetchAIRecommendations = () => {

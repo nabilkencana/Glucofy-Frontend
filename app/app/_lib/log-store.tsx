@@ -12,7 +12,7 @@ import {
 // WHO recommended daily sugar limit (grams). Mirrors the Lovable reference.
 export const SUGAR_LIMIT = 25;
 
-export type Grade = "A" | "B" | "C" | "D" | "E";
+export type Grade = "A" | "B" | "C" | "D";
 
 export interface GradeInfo {
   grade: Grade;
@@ -26,8 +26,7 @@ const GRADE_TABLE: { max: number; info: GradeInfo }[] = [
   { max: 0.5, info: { grade: "A", label: "Excellent", description: "Excellent choice — virtually sugar-free." } },
   { max: 6, info: { grade: "B", label: "Good", description: "Good choice — low sugar content." } },
   { max: 12, info: { grade: "C", label: "Moderate", description: "Moderate — consume mindfully." } },
-  { max: 20, info: { grade: "D", label: "High", description: "High sugar — limit intake." } },
-  { max: Infinity, info: { grade: "E", label: "Very High", description: "Very high sugar — avoid if possible." } },
+  { max: Infinity, info: { grade: "D", label: "High", description: "High sugar — limit intake." } },
 ];
 
 export function gradeForSugar(sugarPer100ml: number): GradeInfo {

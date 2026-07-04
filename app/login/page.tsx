@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Globe, ArrowLeft, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { USFlag, IDFlag } from "../components/Flag";
 import { login } from "@/lib/api";
 
 export default function LoginPage() {
@@ -116,7 +117,19 @@ export default function LoginPage() {
               title={language === "en" ? "Ganti ke Bahasa Indonesia" : "Switch to English"}
             >
               <Globe className="w-3.5 h-3.5 text-slate-400" />
-              <span>{language === "en" ? "🇬🇧 EN" : "🇮🇩 ID"}</span>
+              <span className="flex items-center gap-1">
+                {language === "en" ? (
+                  <>
+                    <USFlag className="w-3.5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>EN</span>
+                  </>
+                ) : (
+                  <>
+                    <IDFlag className="w-3.5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>ID</span>
+                  </>
+                )}
+              </span>
             </button>
           </div>
         </div>

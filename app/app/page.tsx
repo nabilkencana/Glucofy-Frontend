@@ -23,7 +23,7 @@ const fmtTime = (iso: string) =>
   new Date(iso).toLocaleString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
 // NutriGrade → local Grade mapping used by GradeBadge
-const gradeMap: Record<string, "A" | "B" | "C" | "D" | "E"> = {
+const gradeMap: Record<string, "A" | "B" | "C" | "D"> = {
   A: "A", B: "B", C: "C", D: "D",
 };
 

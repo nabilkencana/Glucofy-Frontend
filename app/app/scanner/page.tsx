@@ -21,7 +21,7 @@ const labelClass = "text-sm font-medium leading-none";
 const btnBrand =
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-10 px-4 py-2 bg-brand-gradient text-white shadow-soft transition-all hover:opacity-95 disabled:pointer-events-none disabled:opacity-60 [&_svg]:size-4 [&_svg]:shrink-0";
 
-const gradeMap: Record<NutriGrade, "A" | "B" | "C" | "D" | "E"> = {
+const gradeMap: Record<NutriGrade, "A" | "B" | "C" | "D"> = {
   A: "A", B: "B", C: "C", D: "D",
 };
 

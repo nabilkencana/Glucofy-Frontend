@@ -21,7 +21,7 @@ const dateKey = (d: Date | number) => {
   return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
 };
 
-const gradeMap: Record<string, "A" | "B" | "C" | "D" | "E"> = {
+const gradeMap: Record<string, "A" | "B" | "C" | "D"> = {
   A: "A", B: "B", C: "C", D: "D",
 };
 
@@ -115,7 +115,7 @@ export default function HabitsPage() {
   const segments = useMemo(() => {
     if (totalGradesCount === 0) return [];
     
-    const activeGrades = (["A", "B", "C", "D", "E"] as const)
+    const activeGrades = (["A", "B", "C", "D"] as const)
       .map((grade) => ({ grade, count: gradeCounts[grade] || 0 }))
       .filter((g) => g.count > 0);
 
@@ -135,7 +135,6 @@ export default function HabitsPage() {
       else if (grade === "B") colorHex = "#63C71B";
       else if (grade === "C") colorHex = "#F5A623";
       else if (grade === "D") colorHex = "#F56223";
-      else if (grade === "E") colorHex = "#E53E3E";
 
       return {
         grade,

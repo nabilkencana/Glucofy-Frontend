@@ -80,27 +80,64 @@ export default function HowItWorks() {
         <div className="w-full max-w-[280px] bg-white border border-slate-100 rounded-3xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.015)] space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-400">{t("how_step3_view")}</span>
-            <span className="text-[10px] font-semibold text-glucofy-green">{t("how_step3_choice")}</span>
+            <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-semibold flex items-center gap-1">
+              🔥 {t("how_step3_habit_streak")}
+            </span>
+          </div>
+          <div className="flex justify-between items-center bg-slate-50 border border-slate-100 rounded-2xl p-3">
+            <div>
+              <span className="text-[10px] text-slate-400 block font-medium">{t("how_step3_habit_status")}</span>
+              <span className="text-xs font-bold text-slate-700">{t("how_step3_habit_status_val")}</span>
+            </div>
+            <span className="text-xl font-bold text-amber-500">4 {t("how_step3_habit_days")}</span>
+          </div>
+          <div className="flex justify-between gap-1.5 pt-1">
+            {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => {
+              const active = idx < 4;
+              return (
+                <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
+                  <span className="text-[10px] font-bold text-slate-400">{day}</span>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${active ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"}`}>
+                    {active ? "✓" : ""}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "04",
+      title: t("how_step4_title"),
+      badge: t("how_step4_badge"),
+      description: t("how_step4_desc"),
+      tag: t("how_step4_tag"),
+      mockup: (
+        <div className="w-full max-w-[280px] bg-white border border-slate-100 rounded-3xl p-5 shadow-[0_4px_20px_rgba(15,23,42,0.015)] space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-slate-400">{t("how_step4_view")}</span>
+            <span className="text-[10px] font-semibold text-glucofy-green">{t("how_step4_choice")}</span>
           </div>
           
           <div className="space-y-3">
             {/* Swap Visual */}
             <div className="flex items-center justify-between gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl">
               <div className="text-left">
-                <span className="text-[10px] text-slate-400 block font-medium">{t("how_step3_instead")}</span>
-                <span className="text-xs font-bold text-slate-600">{t("how_step3_instead_val")}</span>
+                <span className="text-[10px] text-slate-400 block font-medium">{t("how_step4_instead")}</span>
+                <span className="text-xs font-bold text-slate-600">{t("how_step4_instead_val")}</span>
               </div>
               <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               <div className="text-left">
-                <span className="text-[10px] text-glucofy-green block font-bold">{t("how_step3_try")}</span>
-                <span className="text-xs font-bold text-green-700">{t("how_step3_try_val")}</span>
+                <span className="text-[10px] text-glucofy-green block font-bold">{t("how_step4_try")}</span>
+                <span className="text-xs font-bold text-green-700">{t("how_step4_try_val")}</span>
               </div>
             </div>
             
             {/* Success message */}
             <div className="flex items-center gap-2 text-xs text-green-700 font-medium">
               <CheckCircle2 className="w-4 h-4 text-green-600" />
-              <span>{t("how_step3_save")}</span>
+              <span>{t("how_step4_save")}</span>
             </div>
           </div>
         </div>
@@ -146,7 +183,8 @@ export default function HowItWorks() {
             return (
               <div
                 key={step.id}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center relative"
+                id={index === 0 ? "step-scan" : index === 1 ? "step-track" : index === 2 ? "step-habit" : "step-ai"}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center relative scroll-mt-24"
               >
                 
                 {/* Massive Low-Opacity Watermark Number behind step block */}

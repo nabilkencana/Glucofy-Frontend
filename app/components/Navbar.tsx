@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Globe, Menu, X } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import { USFlag, IDFlag } from "./Flag";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -88,7 +89,19 @@ export default function Navbar() {
               title={language === "en" ? "Ganti ke Bahasa Indonesia" : "Switch to English"}
             >
               <Globe className="w-3.5 h-3.5 text-slate-400" />
-              <span>{language === "en" ? "🇬🇧 EN" : "🇮🇩 ID"}</span>
+              <span className="flex items-center gap-1">
+                {language === "en" ? (
+                  <>
+                    <USFlag className="w-3.5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>EN</span>
+                  </>
+                ) : (
+                  <>
+                    <IDFlag className="w-3.5 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>ID</span>
+                  </>
+                )}
+              </span>
             </button>
 
             {/* Desktop login + CTA */}
@@ -149,8 +162,20 @@ export default function Navbar() {
               onClick={() => setLanguage(language === "en" ? "id" : "en")}
               className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-700"
             >
-              <Globe className="w-4 h-4" />
-              {language === "en" ? "🇬🇧 English" : "🇮🇩 Indonesia"}
+              <Globe className="w-4 h-4 text-slate-400" />
+              <span className="flex items-center gap-1.5">
+                {language === "en" ? (
+                  <>
+                    <USFlag className="w-4 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>English</span>
+                  </>
+                ) : (
+                  <>
+                    <IDFlag className="w-4 aspect-[3/2] rounded-sm shadow-[0_0_0_1px_rgba(0,0,0,0.08)]" />
+                    <span>Indonesia</span>
+                  </>
+                )}
+              </span>
             </button>
             <Link
               href="#cta"
