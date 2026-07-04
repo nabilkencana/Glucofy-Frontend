@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import {
   getMyProfile,
   updateHealthProfile,
-  getHealthProfile,
   logout,
   type HealthProfileInput,
 } from "@/lib/api";
@@ -47,11 +46,15 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    Promise.all([getMyProfile(), getHealthProfile()])
-      .then(([u, hp]) => {
+    getMyProfile()
+      .then((u: any) => {
         setName(u.name);
         setEmail(u.email);
         setRole(u.role);
+        
+        // Coba periksa apakah data health profile ada di object user
+        // (Bisa di root `u` atau bersarang di `u.healthProfile`)
+        const hp = u.healthProfile || u;
         
         if (hp.age) setAge(hp.age);
         if (hp.weight) setWeight(hp.weight);
@@ -60,7 +63,7 @@ export default function ProfilePage() {
         if (hp.activityLevel) setActivityLevel(hp.activityLevel);
         if (hp.dailySugarLimit) setDailySugarLimit(hp.dailySugarLimit);
       })
-      .catch((e) => console.error("Error fetching profile and health data:", e))
+      .catch((e) => console.error("Error fetching profile:", e))
       .finally(() => setLoading(false));
   }, []);
 
@@ -131,10 +134,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Health Profile form */}
       <form onSubmit={handleSaveChanges} className={cardStyle}>
         <h2 className="text-lg font-semibold text-foreground mb-1">
-          {t("profile_age_label")} &amp; Health Data
+          {t("profile_section_health")}
         </h2>
         {dailySugarLimit !== null && (
           <p className="text-sm text-muted-foreground mb-4">
@@ -158,7 +160,7 @@ export default function ProfilePage() {
           </div>
           {/* Weight */}
           <div>
-            <label className={labelStyle}>Weight (kg)</label>
+            <label className={labelStyle}>{t("profile_weight_label")}</label>
             <input
               type="number"
               value={weight}
@@ -170,7 +172,7 @@ export default function ProfilePage() {
           </div>
           {/* Height */}
           <div>
-            <label className={labelStyle}>Height (cm)</label>
+            <label className={labelStyle}>{t("profile_height_label")}</label>
             <input
               type="number"
               value={height}
@@ -182,20 +184,20 @@ export default function ProfilePage() {
           </div>
           {/* Gender */}
           <div>
-            <label className={labelStyle}>Gender</label>
+            <label className={labelStyle}>{t("profile_gender_label")}</label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value as "MALE" | "FEMALE" | "")}
               className={inputStyle}
             >
-              <option value="">— select —</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
+              <option value="">{t("profile_gender_select")}</option>
+              <option value="MALE">{t("profile_gender_male")}</option>
+              <option value="FEMALE">{t("profile_gender_female")}</option>
             </select>
           </div>
           {/* Activity */}
           <div className="sm:col-span-2">
-            <label className={labelStyle}>Activity Level</label>
+            <label className={labelStyle}>{t("profile_activity_label")}</label>
             <select
               value={activityLevel}
               onChange={(e) =>
@@ -205,11 +207,11 @@ export default function ProfilePage() {
               }
               className={inputStyle}
             >
-              <option value="">— select —</option>
-              <option value="SEDENTARY">Sedentary</option>
-              <option value="LIGHT">Light</option>
-              <option value="MODERATE">Moderate</option>
-              <option value="ACTIVE">Active</option>
+              <option value="">{t("profile_activity_select")}</option>
+              <option value="SEDENTARY">{t("profile_activity_sedentary")}</option>
+              <option value="LIGHT">{t("profile_activity_light")}</option>
+              <option value="MODERATE">{t("profile_activity_moderate")}</option>
+              <option value="ACTIVE">{t("profile_activity_active")}</option>
             </select>
           </div>
         </div>
