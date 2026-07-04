@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   getMyProfile,
   updateHealthProfile,
+  getHealthProfile,
   logout,
   type HealthProfileInput,
 } from "@/lib/api";
@@ -46,15 +47,11 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getMyProfile()
-      .then((u: any) => {
+    Promise.all([getMyProfile(), getHealthProfile()])
+      .then(([u, hp]) => {
         setName(u.name);
         setEmail(u.email);
         setRole(u.role);
-        
-        // Coba periksa apakah data health profile ada di object user
-        // (Bisa di root `u` atau bersarang di `u.healthProfile`)
-        const hp = u.healthProfile || u;
         
         if (hp.age) setAge(hp.age);
         if (hp.weight) setWeight(hp.weight);
@@ -63,7 +60,7 @@ export default function ProfilePage() {
         if (hp.activityLevel) setActivityLevel(hp.activityLevel);
         if (hp.dailySugarLimit) setDailySugarLimit(hp.dailySugarLimit);
       })
-      .catch((e) => console.error("Error fetching profile:", e))
+      .catch((e) => console.error("Error fetching profile and health data:", e))
       .finally(() => setLoading(false));
   }, []);
 

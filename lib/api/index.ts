@@ -13,7 +13,7 @@ export { register, login, logout } from "./auth.service";
 export type { AuthResponse, RegisterInput, LoginInput } from "./auth.service";
 
 // User & health profile
-export { getMyProfile, updateHealthProfile } from "./user.service";
+export { getMyProfile, updateHealthProfile, getHealthProfile } from "./user.service";
 export type {
   UserProfile,
   HealthProfile,

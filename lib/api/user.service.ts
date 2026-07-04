@@ -60,3 +60,11 @@ export async function updateHealthProfile(
     body: input,
   });
 }
+
+/**
+ * GET /users/me/health-profile
+ * Retrieve health profile data including age, weight, height, and daily sugar limit.
+ */
+export async function getHealthProfile(): Promise<HealthProfile> {
+  return apiFetch<HealthProfile>("/users/me/health-profile");
+}
