@@ -405,11 +405,11 @@ Breakdown of sugar consumption by time of day.
 
 ---
 
-## 4. Summarize (Premium)
+## 4. Summarize (Premium - Personalization & Decision Support)
 
 ### POST `/summarize`
 
-Generate personalized AI health recommendations based on the user's consumption patterns, BMI, and activity level.
+Generate personalized health recommendations and decision support based on the user's consumption patterns, BMI, and activity level.
 
 **Auth:** Bearer JWT + Active Premium Subscription
 

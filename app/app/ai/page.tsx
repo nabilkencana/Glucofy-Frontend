@@ -58,7 +58,7 @@ export default function AIPage() {
       .catch((err) => {
         setAiError(
           err?.status === 403
-            ? "AI recommendations require a premium subscription."
+            ? "Personalization & decision support require a premium subscription."
             : "Failed to fetch recommendations. Please try again."
         );
       })
@@ -183,18 +183,18 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* AI Recommendations — POST /summarize */}
+      {/* Personalization & Decision Support — POST /summarize */}
       <div className={cardStyle}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
-            {language === "id" ? "Rekomendasi AI" : "AI Recommendations"}
+            {language === "id" ? "Personalisasi & Dukungan Keputusan" : "Personalization & Decision Support"}
           </h3>
           <button
             onClick={fetchAIRecommendations}
             disabled={aiLoading}
             className="text-xs border border-border bg-card hover:bg-muted text-foreground px-3.5 py-1.5 rounded-full font-medium transition-colors cursor-pointer disabled:opacity-60"
           >
-            {aiLoading ? (language === "id" ? "Memuat..." : "Loading...") : (language === "id" ? "Muat Rekomendasi" : "Load Recommendations")}
+            {aiLoading ? (language === "id" ? "Memuat..." : "Loading...") : (language === "id" ? "Muat Personalisasi" : "Load Personalization")}
           </button>
         </div>
 
@@ -208,8 +208,8 @@ export default function AIPage() {
             </h4>
             <p className="text-sm text-slate-600 max-w-sm mt-2 leading-relaxed">
               {language === "id"
-                ? "Dapatkan rekomendasi kesehatan kustom berbasis AI dan analisis pola konsumsi gula dengan berlangganan Premium."
-                : "Unlock custom AI-based health recommendations and sugar consumption pattern analysis with Premium."}
+                ? "Dapatkan wawasan personalisasi kustom & dukungan keputusan dan analisis pola konsumsi gula dengan berlangganan Premium."
+                : "Unlock custom personalization & decision support and sugar consumption pattern analysis with Premium."}
             </p>
             <button
               onClick={() => {

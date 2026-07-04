@@ -284,7 +284,7 @@
       "name": "Summarize",
       "item": [
         {
-          "name": "AI Recommendations (Premium)",
+          "name": "Personalization & Decision Support (Premium)",
           "request": {
             "method": "POST",
             "header": [

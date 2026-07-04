@@ -1,5 +1,5 @@
 /**
- * Summarize service — Premium AI health recommendations.
+ * Summarize service — Premium Personalization & Decision Support.
  * Requires an active premium subscription; returns 403 otherwise.
  */
 
@@ -16,7 +16,7 @@ export interface SummarizeResponse {
 
 /**
  * POST /summarize
- * Generates personalized AI recommendations from the user's consumption history,
+ * Generates personalized recommendations & decision support from the user's consumption history,
  * BMI, and activity level. Premium users only — throws ApiError(403) if not subscribed.
  */
 export async function getAIRecommendations(): Promise<SummarizeResponse> {
