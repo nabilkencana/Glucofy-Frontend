@@ -34,7 +34,7 @@ export default function Footer() {
 
         {/* Center: Navigation links */}
         <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-slate-500 font-light">
-          <Link href="#about" className="hover:text-slate-900 transition-colors">
+          <Link href="/about" className="hover:text-slate-900 transition-colors">
             {t("footer_about")}
           </Link>
           <Link href="#contact" className="hover:text-slate-900 transition-colors">
