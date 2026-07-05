@@ -15,6 +15,7 @@ import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageBlur from "../components/PageBlur";
+import { useLanguage } from "../context/LanguageContext";
 
 // Instagram Icon Component
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -51,8 +52,8 @@ const LinkedInIcon = ({ className }: { className?: string }) => (
 const team = [
   {
     name: "Siana Norma Heny",
-    role: "Guru Pembimbing",
-    bio: "Membimbing pengembangan Glucofy dalam aspek inovasi, riset, dan kewirausahaan.",
+    roleKey: "about_team_role_advisor",
+    bioKey: "about_team_bio_siana",
     instagram: "https://www.instagram.com/snh_ae/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "SN",
@@ -60,8 +61,8 @@ const team = [
   },
   {
     name: "Agnetha Shiella Putri Firmansyah",
-    role: "Co-Founder",
-    bio: "Berfokus pada strategi produk, pengembangan bisnis, serta arah inovasi Glucofy.",
+    roleKey: "about_team_role_co_founder",
+    bioKey: "about_team_bio_agnetha",
     instagram: "https://www.instagram.com/keitsku/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "AS",
@@ -69,8 +70,8 @@ const team = [
   },
   {
     name: "Khoirunnisa' Azzahro",
-    role: "Co-Founder",
-    bio: "Mengembangkan konsep, riset pengguna, teknologi, dan keberlanjutan Glucofy.",
+    roleKey: "about_team_role_co_founder",
+    bioKey: "about_team_bio_khoirunnisa",
     instagram: "https://www.instagram.com/tamagoonigirii/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "KA",
@@ -78,8 +79,8 @@ const team = [
   },
   {
     name: "Iqbal Rizqi Ramadhan",
-    role: "AI Engineer & Back-end Developer",
-    bio: "Mengembangkan sistem AI dan infrastruktur backend untuk menghadirkan pengalaman yang cerdas dan andal.",
+    roleKey: "about_team_role_ai_backend",
+    bioKey: "about_team_bio_iqbal",
     instagram: "https://www.instagram.com/theminesence/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "IR",
@@ -87,8 +88,8 @@ const team = [
   },
   {
     name: "Akira Saskara Hartono",
-    role: "AI Engineer & Back-end Developer",
-    bio: "Berfokus pada pengembangan model AI, integrasi sistem, dan optimasi performa platform.",
+    roleKey: "about_team_role_ai_backend",
+    bioKey: "about_team_bio_akira",
     instagram: "https://www.instagram.com/_akiraass_/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "AH",
@@ -96,8 +97,8 @@ const team = [
   },
   {
     name: "Muhammad Haikal Arrasyid",
-    role: "Videographer & Front-end Developer",
-    bio: "Menggabungkan kreativitas visual dan pengembangan antarmuka untuk memperkuat identitas Glucofy.",
+    roleKey: "about_team_role_video_frontend",
+    bioKey: "about_team_bio_haikal",
     instagram: "https://www.instagram.com/namakuhaikall/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     image: "/profile picture/haikal.webp",
@@ -107,8 +108,8 @@ const team = [
   },
   {
     name: "Mohammad Maulana Alfara Salim",
-    role: "Front-end Developer",
-    bio: "Membangun antarmuka web yang responsif, intuitif, dan nyaman digunakan.",
+    roleKey: "about_team_role_frontend",
+    bioKey: "about_team_bio_maulana",
     instagram: "https://www.instagram.com/azuranyxa/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     initials: "MM",
@@ -116,8 +117,8 @@ const team = [
   },
   {
     name: "Mohammad Nabil Anwar Kencana",
-    role: "Front-end Developer",
-    bio: "Mengembangkan pengalaman pengguna yang modern dan interaktif melalui implementasi antarmuka digital.",
+    roleKey: "about_team_role_frontend",
+    bioKey: "about_team_bio_nabil",
     instagram: "https://www.instagram.com/nabill.anwr/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     image: "/profile picture/nabil.webp",
@@ -127,8 +128,8 @@ const team = [
   },
   {
     name: "Mahija Abyudaya",
-    role: "Graphic Designer",
-    bio: "Menciptakan identitas visual, desain grafis, dan aset kreatif yang mendukung pengalaman pengguna Glucofy.",
+    roleKey: "about_team_role_designer",
+    bioKey: "about_team_bio_mahija",
     instagram: "https://www.instagram.com/abyonkk/",
     linkedin: "https://www.linkedin.com/in/agnetha-shiella-p-firmansyah-13a496419/",
     image: "/team/mahija.jpg",
@@ -142,33 +143,29 @@ const team = [
 const values = [
   {
     icon: Heart,
-    title: "Peduli Kesehatan",
-    description:
-      "Kami percaya setiap orang berhak mendapatkan akses mudah terhadap informasi gizi yang jujur dan transparan.",
+    titleKey: "about_val_1_title",
+    descriptionKey: "about_val_1_desc",
     color: "text-rose-500",
     bg: "bg-rose-50",
   },
   {
     icon: Leaf,
-    title: "Ramah & Alami",
-    description:
-      "Glucofy hadir dengan pendekatan yang hangat — tanpa menghakimi, hanya mendampingi perjalanan hidupmu.",
+    titleKey: "about_val_2_title",
+    descriptionKey: "about_val_2_desc",
     color: "text-green-600",
     bg: "bg-green-50",
   },
   {
     icon: ShieldCheck,
-    title: "Akurasi & Kepercayaan",
-    description:
-      "Data yang kami sajikan berbasis ilmiah dan divalidasi oleh para ahli gizi dan teknologi kesehatan.",
+    titleKey: "about_val_3_title",
+    descriptionKey: "about_val_3_desc",
     color: "text-blue-500",
     bg: "bg-blue-50",
   },
   {
     icon: TrendingUp,
-    title: "Inovasi Berkelanjutan",
-    description:
-      "Kami terus belajar dan berkembang bersama komunitas pengguna untuk menghadirkan fitur yang benar-benar bermanfaat.",
+    titleKey: "about_val_4_title",
+    descriptionKey: "about_val_4_desc",
     color: "text-purple-500",
     bg: "bg-purple-50",
   },
@@ -188,6 +185,8 @@ const fadeUp = {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AboutPage() {
+  const { t } = useLanguage();
+
   return (
     <>
       <Navbar />
@@ -214,45 +213,18 @@ export default function AboutPage() {
             >
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-700 mb-6 shadow-sm">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Tentang Kami</span>
+                <span>{t("about_badge")}</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-6">
-                Dibuat dengan{" "}
-                <span className="text-glucofy-gradient">semangat</span>{" "}
-                untuk hidupmu yang lebih sehat
+                {t("about_title_1")}{" "}
+                <span className="text-glucofy-gradient">{t("about_title_gradient")}</span>{" "}
+                {t("about_title_2")}
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed font-light">
-                Glucofy lahir dari satu pertanyaan sederhana:{" "}
-                <em>seberapa banyak gula yang kita konsumsi tanpa kita sadari?</em>{" "}
-                Kami adalah tim muda yang percaya teknologi bisa menjadi teman terbaik dalam perjalanan hidup sehat.
+                {t("about_subtitle")}
               </p>
             </motion.div>
 
-            {/* Stats strip */}
-            <motion.div
-              className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-5"
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              custom={2}
-            >
-              {[
-                { value: "17k+", label: "Pengguna Aktif" },
-                { value: "31%", label: "Rata-rata penurunan konsumsi gula" },
-                { value: "50k+", label: "Produk terdaftar" },
-                { value: "9", label: "Anggota Tim" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-liquid-glass rounded-[24px] border border-white/40 shadow-soft p-6 text-center"
-                >
-                  <p className="text-3xl font-extrabold text-glucofy-gradient mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
-                </div>
-              ))}
-            </motion.div>
           </section>
 
           {/* Mission & Vision */}
@@ -261,19 +233,19 @@ export default function AboutPage() {
               {[
                 {
                   icon: Target,
-                  label: "Misi Kami",
+                  label: t("about_misi_label"),
                   color: "text-green-600",
                   bg: "bg-green-50",
-                  title: "Memberdayakan pilihan sehat",
-                  desc: "Kami hadir untuk membantu masyarakat Indonesia membuat pilihan konsumsi yang lebih cerdas — dengan teknologi AI yang mudah diakses, kapan saja dan di mana saja.",
+                  title: t("about_misi_title"),
+                  desc: t("about_misi_desc"),
                 },
                 {
                   icon: Sparkles,
-                  label: "Visi Kami",
+                  label: t("about_visi_label"),
                   color: "text-emerald-600",
                   bg: "bg-emerald-50",
-                  title: "Indonesia bebas diabetes",
-                  desc: "Kami bermimpi menjadi platform kesehatan terdepan yang secara nyata berkontribusi menurunkan angka diabetes dan penyakit metabolik di Indonesia.",
+                  title: t("about_visi_title"),
+                  desc: t("about_visi_desc"),
                 },
               ].map((item, i) => (
                 <motion.div
@@ -308,17 +280,17 @@ export default function AboutPage() {
               variants={fadeUp}
             >
               <span className="text-xs font-bold uppercase tracking-widest text-green-600 mb-3 block">
-                Nilai-nilai Kami
+                {t("about_values_label")}
               </span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Yang mendorong kami setiap hari
+                {t("about_values_title")}
               </h2>
             </motion.div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {values.map((v, i) => (
                 <motion.div
-                  key={v.title}
+                  key={v.titleKey}
                   className="bg-liquid-glass rounded-[24px] border border-white/40 shadow-soft p-7 flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300"
                   initial="hidden"
                   whileInView="visible"
@@ -330,8 +302,8 @@ export default function AboutPage() {
                     <v.icon className={"w-5 h-5 " + v.color} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 mb-1.5">{v.title}</h3>
-                    <p className="text-sm text-slate-500 font-light leading-relaxed">{v.description}</p>
+                    <h3 className="font-bold text-slate-900 mb-1.5">{t(v.titleKey)}</h3>
+                    <p className="text-sm text-slate-500 font-light leading-relaxed">{t(v.descriptionKey)}</p>
                   </div>
                 </motion.div>
               ))}
@@ -349,13 +321,13 @@ export default function AboutPage() {
             >
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs font-semibold text-green-700 mb-4 shadow-sm">
                 <Users className="w-3.5 h-3.5" />
-                <span>The People Behind Glucofy</span>
+                <span>{t("about_team_badge")}</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-                Tim yang membangun Glucofy
+                {t("about_team_title")}
               </h2>
               <p className="text-slate-500 max-w-xl mx-auto font-light leading-relaxed">
-                Kami adalah tim lintas disiplin yang bersatu karena satu tujuan — membuat Indonesia lebih sehat, satu scan gula dalam satu waktu.
+                {t("about_team_desc")}
               </p>
             </motion.div>
 
@@ -395,10 +367,10 @@ export default function AboutPage() {
                   <h3 className="font-bold text-xl text-slate-900 leading-tight">{member.name}</h3>
 
                   {/* Role */}
-                  <p className="text-sm text-green-600 font-semibold">{member.role}</p>
+                  <p className="text-sm text-green-600 font-semibold">{t(member.roleKey)}</p>
 
                   {/* Bio */}
-                  <p className="text-sm text-slate-500 font-light leading-relaxed">{member.bio}</p>
+                  <p className="text-sm text-slate-500 font-light leading-relaxed">{t(member.bioKey)}</p>
 
                   {/* Social Links */}
                   <div className="flex items-center gap-3 mt-auto pt-2">
@@ -440,19 +412,19 @@ export default function AboutPage() {
 
               <div className="relative z-10 max-w-2xl mx-auto">
                 <p className="text-white/70 text-sm font-semibold uppercase tracking-widest mb-3">
-                  Mulai Sekarang
+                  {t("about_cta_badge")}
                 </p>
                 <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-                  Bergabunglah dan kendalikan asupan gulamu
+                  {t("about_cta_title")}
                 </h2>
                 <p className="text-white/80 text-base font-light mb-8 leading-relaxed">
-                  Lebih dari 17.000 pengguna sudah merasakan manfaatnya. Giliran kamu untuk hidup lebih sehat bersama Glucofy.
+                  {t("about_cta_desc")}
                 </p>
                 <Link
                   href="/register"
                   className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-white text-green-700 font-bold text-sm hover:bg-green-50 hover:shadow-lg transition-all duration-200"
                 >
-                  Coba Glucofy Gratis
+                  {t("about_cta_btn")}
                 </Link>
               </div>
             </motion.div>
