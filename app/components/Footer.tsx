@@ -37,10 +37,10 @@ export default function Footer() {
           <Link href="/about" className="hover:text-slate-900 transition-colors">
             {t("footer_about")}
           </Link>
-          <Link href="#contact" className="hover:text-slate-900 transition-colors">
+          <Link href="mailto:support@glucofy.com" className="hover:text-slate-900 transition-colors">
             {t("footer_contact")}
           </Link>
-          <Link href="#privacy" className="hover:text-slate-900 transition-colors">
+          <Link href="/privacy" className="hover:text-slate-900 transition-colors">
             {t("footer_privacy")}
           </Link>
         </nav>

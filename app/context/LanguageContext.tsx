@@ -368,6 +368,18 @@ const translations = {
     about_cta_title: "Join us and control your sugar intake",
     about_cta_desc: "Over 17,000 users have already felt the benefits. It's your turn to live healthier with Glucofy.",
     about_cta_btn: "Try Glucofy for Free",
+
+    // Privacy
+    privacy_title: "Privacy Policy",
+    privacy_subtitle: "Last updated: July 2026",
+    privacy_intro: "At Glucofy, we take your privacy seriously. This policy explains how we collect, use, and protect your personal and health data.",
+    privacy_sec1_title: "1. Data We Collect",
+    privacy_sec1_desc: "We collect information you provide directly to us, including your name, email address, age, gender, weight, height, activity level, and your logged sugar intake records.",
+    privacy_sec2_title: "2. How We Use Your Data",
+    privacy_sec2_desc: "Your health profile is used solely to calculate recommended daily sugar intake limits and provide personalized AI suggestions. We do not sell your personal data to third parties.",
+    privacy_sec3_title: "3. Data Security & Storage",
+    privacy_sec3_desc: "All data is securely transmitted and stored in our systems. You can delete your account and personal history at any time through the profile settings.",
+    privacy_back_home: "Back to Home",
   },
   id: {
     // Navbar
@@ -726,6 +738,18 @@ const translations = {
     about_cta_title: "Bergabunglah dan kendalikan asupan gulamu",
     about_cta_desc: "Lebih dari 17.000 pengguna sudah merasakan manfaatnya. Giliran kamu untuk hidup lebih sehat bersama Glucofy.",
     about_cta_btn: "Coba Glucofy Gratis",
+
+    // Privacy
+    privacy_title: "Kebijakan Privasi",
+    privacy_subtitle: "Terakhir diperbarui: Juli 2026",
+    privacy_intro: "Di Glucofy, kami menjaga privasi Anda dengan serius. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi data pribadi dan kesehatan Anda.",
+    privacy_sec1_title: "1. Data yang Kami Kumpulkan",
+    privacy_sec1_desc: "Kami mengumpulkan informasi yang Anda berikan langsung kepada kami, termasuk nama, alamat email, usia, jenis kelamin, berat badan, tinggi badan, tingkat aktivitas, dan catatan asupan gula Anda.",
+    privacy_sec2_title: "2. Bagaimana Kami Menggunakan Data Anda",
+    privacy_sec2_desc: "Profil kesehatan Anda hanya digunakan untuk menghitung batas rekomendasi asupan gula harian dan memberikan saran AI yang dipersonalisasi. Kami tidak menjual data pribadi Anda ke pihak ketiga.",
+    privacy_sec3_title: "3. Keamanan & Penyimpanan Data",
+    privacy_sec3_desc: "Semua data dikirimkan dan disimpan secara aman di sistem kami. Anda dapat menghapus akun dan riwayat pribadi Anda kapan saja melalui pengaturan profil.",
+    privacy_back_home: "Kembali ke Beranda",
   },
 };
 
