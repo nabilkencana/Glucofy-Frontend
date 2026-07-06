@@ -215,7 +215,7 @@ export default function DashboardPage() {
               {t("dash_quick_scan")}
             </Link>
             <Link
-              href="/app/tracker"
+              href="/app/scanner"
               className="flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
             >
               <PencilLine className="h-[18px] w-[18px]" />

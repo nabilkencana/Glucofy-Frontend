@@ -11,7 +11,7 @@ import {
   Flame,
   Sparkles,
   Settings,
-  PanelLeft,
+  Menu,
   User,
   LogOut,
 } from "lucide-react";
@@ -154,7 +154,7 @@ export default function DashboardShell({
               aria-label="Toggle sidebar"
               className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <PanelLeft className="h-5 w-5" />
+              <Menu className="h-5 w-5" />
             </button>
             <p className="truncate text-sm text-foreground sm:text-base">
               {t("dash_greeting")}, {userName ?? "..."} <span aria-hidden>👋</span>
