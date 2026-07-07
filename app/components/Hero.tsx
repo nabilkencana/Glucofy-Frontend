@@ -76,13 +76,13 @@ export default function Hero() {
               variants={itemVariants}
               className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-10"
             >
-              <Link
-                href="#cta"
+              <button
+                onClick={() => { document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); history.pushState(null, '', '#cta'); }}
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-white bg-glucofy-gradient hover:opacity-90 transition-opacity shadow-sm shadow-green-500/10"
               >
                 <span>{t("hero_cta_primary")}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+              </button>
               <Link
                 href="#how-it-works"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200/80 transition-colors"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { LanguageProvider } from "./context/LanguageContext";
+import ScrollRestoration from "./components/ScrollRestoration";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${plusJakartaSans.variable} h-full antialiased scroll-smooth`}>
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-green-100 selection:text-green-800">
+        <ScrollRestoration />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

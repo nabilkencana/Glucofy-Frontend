@@ -47,7 +47,11 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 group" onClick={() => setMobileOpen(false)}>
+          <Link
+            href="/"
+            className="flex items-center gap-1 group"
+            onClick={() => { setMobileOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          >
             <div className="w-7 h-7 sm:w-8 sm:h-8 relative transition-transform group-hover:scale-105">
               <Image
                 src="/Group 14513.png"
@@ -111,12 +115,12 @@ export default function Navbar() {
             >
               {t("nav_login")}
             </Link>
-            <Link
-              href="#cta"
+            <button
+              onClick={() => { document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); history.pushState(null, '', '#cta'); }}
               className="hidden sm:inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-sm font-medium text-white bg-glucofy-gradient hover:opacity-90 shadow-sm transition-opacity"
             >
               {t("nav_get_started")}
-            </Link>
+            </button>
 
             {/* Hamburger — mobile only */}
             <button
@@ -177,13 +181,12 @@ export default function Navbar() {
                 )}
               </span>
             </button>
-            <Link
-              href="#cta"
-              onClick={() => setMobileOpen(false)}
+            <button
+              onClick={() => { setMobileOpen(false); document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' }); history.pushState(null, '', '#cta'); }}
               className="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-base font-semibold text-white bg-glucofy-gradient shadow-sm"
             >
               {t("nav_get_started")}
-            </Link>
+            </button>
           </div>
         </div>
       )}
